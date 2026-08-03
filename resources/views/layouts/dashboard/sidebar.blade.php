@@ -27,12 +27,12 @@
             </a>
           </li>
           <li>
-            <a href="#">
+            <a href="{{ route('rekognisi.index') }}" class="{{ request()->routeIs('rekognisi.*') ? 'active' : '' }}">
               <i class="bi bi-circle"></i><span>Rekognisi</span>
             </a>
           </li>
           <li>
-            <a href="#">
+            <a href="{{ route('sertifikasi.index') }}" class="{{ request()->routeIs('sertifikasi.*') ? 'active' : '' }}">
               <i class="bi bi-circle"></i><span>Sertifikasi</span>
             </a>
           </li>
@@ -40,13 +40,13 @@
       </li><!-- End Components Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link {{ request()->routeIs('institusi.*') ? '' : 'collapsed' }}" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-journal-text"></i><span>Tata Kelola</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="forms-nav" class="nav-content collapse {{ request()->routeIs('institusi.*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
           <li>
-            <a href="forms-elements.html">
-              <i class="bi bi-circle"></i><span>Instansi</span>
+            <a href="{{ route('institusi.index') }}" class="{{ request()->routeIs('institusi.*') ? 'active' : '' }}">
+              <i class="bi bi-circle"></i><span>Institusi</span>
             </a>
           </li>
         </ul>

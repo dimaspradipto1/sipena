@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
@@ -15,61 +14,167 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $users = [
+            // Superadmin
             [
-                'name' => 'Super Admin SIPENA',
-                'email' => 'superadmin@sipena.ac.id',
-                'password' => Hash::make('password'),
-                'role' => 'superadmin',
+                'name'      => 'Super Admin SIPENA',
+                'email'     => 'superadmin@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'superadmin',
                 'is_active' => true,
             ],
             [
-                'name' => 'Admin BKAK',
-                'email' => 'adminbkak@sipena.ac.id',
-                'password' => Hash::make('password'),
-                'role' => 'adminbkak',
+                'name'      => 'System Administrator',
+                'email'     => 'admin.system@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'superadmin',
+                'is_active' => true,
+            ],
+
+            // Admin BKAK
+            [
+                'name'      => 'Admin BKAK Utama',
+                'email'     => 'adminbkak@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'adminbkak',
                 'is_active' => true,
             ],
             [
-                'name' => 'Kepala Bidang Kemahasiswaan',
-                'email' => 'kabid@sipena.ac.id',
-                'password' => Hash::make('password'),
-                'role' => 'kabid',
+                'name'      => 'Siti Rahmawati, S.Kom',
+                'email'     => 'siti.rahmawati@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'adminbkak',
+                'is_active' => true,
+            ],
+
+            // Kabid
+            [
+                'name'      => 'Dr. H. Ahmad Dahlan, M.Pd.',
+                'email'     => 'kabid@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'kabid',
                 'is_active' => true,
             ],
             [
-                'name' => 'Staff Kemahasiswaan',
-                'email' => 'staff@sipena.ac.id',
-                'password' => Hash::make('password'),
-                'role' => 'staff',
+                'name'      => 'Dr. Ratna Sari, M.Si.',
+                'email'     => 'ratna.kabid@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'kabid',
+                'is_active' => true,
+            ],
+
+            // Staff Kemahasiswaan
+            [
+                'name'      => 'Staff Kemahasiswaan',
+                'email'     => 'staff@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'staff',
                 'is_active' => true,
             ],
             [
-                'name' => 'Pimpinan Universitas',
-                'email' => 'pimpinan@sipena.ac.id',
-                'password' => Hash::make('password'),
-                'role' => 'pimpinan',
+                'name'      => 'Budi Santoso, A.Md.',
+                'email'     => 'budi.staff@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'staff',
                 'is_active' => true,
             ],
             [
-                'name' => 'Admin Program Studi',
-                'email' => 'prodi@sipena.ac.id',
-                'password' => Hash::make('password'),
-                'role' => 'prodi',
+                'name'      => 'Dewi Lestari, S.E.',
+                'email'     => 'dewi.staff@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'staff',
+                'is_active' => false,
+            ],
+
+            // Pimpinan Universitas
+            [
+                'name'      => 'Prof. Dr. Ir. H. Muhammad Ridwan, M.T.',
+                'email'     => 'pimpinan@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'pimpinan',
                 'is_active' => true,
             ],
             [
-                'name' => 'Dosen Pendamping',
-                'email' => 'dosenpendamping@sipena.ac.id',
-                'password' => Hash::make('password'),
-                'role' => 'dosenpendamping',
+                'name'      => 'Dr. Hj. Nurhayati, M.M.',
+                'email'     => 'warek3@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'pimpinan',
+                'is_active' => true,
+            ],
+
+            // Admin Program Studi
+            [
+                'name'      => 'Admin Prodi Teknik Informatika',
+                'email'     => 'prodi@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'prodi',
                 'is_active' => true,
             ],
             [
-                'name' => 'Mahasiswa Berprestasi',
-                'email' => 'mahasiswa@sipena.ac.id',
-                'password' => Hash::make('password'),
-                'role' => 'mahasiswa',
+                'name'      => 'Admin Prodi Sistem Informasi',
+                'email'     => 'prodi.si@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'prodi',
                 'is_active' => true,
+            ],
+            [
+                'name'      => 'Admin Prodi Manajemen',
+                'email'     => 'prodi.manajemen@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'prodi',
+                'is_active' => true,
+            ],
+
+            // Dosen Pendamping
+            [
+                'name'      => 'Dosen Pendamping Utama',
+                'email'     => 'dosenpendamping@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'dosenpendamping',
+                'is_active' => true,
+            ],
+            [
+                'name'      => 'Hendra Wijaya, S.T., M.Eng.',
+                'email'     => 'hendra.dosen@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'dosenpendamping',
+                'is_active' => true,
+            ],
+            [
+                'name'      => 'Maya Indah, S.Kom., M.T.',
+                'email'     => 'maya.dosen@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'dosenpendamping',
+                'is_active' => true,
+            ],
+
+            // Mahasiswa
+            [
+                'name'      => 'Mahasiswa Berprestasi',
+                'email'     => 'mahasiswa@uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'mahasiswa',
+                'is_active' => true,
+            ],
+            [
+                'name'      => 'Frida Ayu Wulandari',
+                'email'     => 'frida.wulandari@student.uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'mahasiswa',
+                'is_active' => true,
+            ],
+            [
+                'name'      => 'Rizky Pratama Putra',
+                'email'     => 'rizky.pratama@student.uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'mahasiswa',
+                'is_active' => true,
+            ],
+            [
+                'name'      => 'Anisa Nurul Hidayah',
+                'email'     => 'anisa.hidayah@student.uis.ac.id',
+                'password'  => Hash::make('password'),
+                'role'      => 'mahasiswa',
+                'is_active' => false,
             ],
         ];
 

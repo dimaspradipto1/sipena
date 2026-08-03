@@ -22,28 +22,29 @@ class PrestasiMandiriController extends Controller
                 'Internasional'  => 'Internasional',
             ],
             'kategoris' => [
-                'Riset dan Inovasi : STEM' => 'Riset dan Inovasi : STEM',
-                'Riset dan Inovasi : SSH'  => 'Riset dan Inovasi : SSH',
-                'Seni dan Budaya'          => 'Seni dan Budaya',
-                'Olahraga'                 => 'Olahraga',
-                'Minat Khusus'             => 'Minat Khusus',
+                'Seni dan Budaya'                      => 'Seni dan Budaya',
+                'Olahraga'                             => 'Olahraga',
+                'Sains, Teknologi dan Inovasi / SSI'   => 'Sains, Teknologi dan Inovasi / SSI',
+                'Keagamaan'                            => 'Keagamaan',
+                'Wirausaha'                            => 'Wirausaha',
+                'Lainnya'                              => 'Lainnya',
             ],
             'peringkats' => [
-                'Juara I'                      => 'Juara I',
-                'Juara II'                     => 'Juara II',
-                'Juara III'                    => 'Juara III',
-                'Harapan I'                    => 'Harapan I',
-                'Harapan II'                   => 'Harapan II',
-                'Harapan III'                  => 'Harapan III',
-                'Apresiasi / Finalis / Lainnya' => 'Apresiasi / Finalis / Lainnya',
+                'Juara I'          => 'Juara I',
+                'Juara II'         => 'Juara II',
+                'Juara III'        => 'Juara III',
+                'Harapan I'        => 'Harapan I',
+                'Harapan II'       => 'Harapan II',
+                'Harapan III'      => 'Harapan III',
+                'Peserta / Finalis' => 'Peserta / Finalis',
             ],
             'kepesertaans' => [
                 'Individu' => 'Individu',
                 'Kelompok' => 'Kelompok',
             ],
             'bentuks' => [
-                'Daring' => 'Daring',
                 'Luring' => 'Luring',
+                'Daring' => 'Daring',
                 'Hybrid' => 'Hybrid',
             ],
         ];
@@ -95,9 +96,15 @@ class PrestasiMandiriController extends Controller
             'data_dosen.*.nidn'       => ['nullable', 'string'],
             'data_dosen.*.nama'       => ['nullable', 'string'],
             'data_dosen.*.url_surat'  => ['nullable', 'string'],
+        ], [
+            'level.required'            => 'Level wajib dipilih.',
+            'kategori.required'         => 'Kategori wajib dipilih.',
+            'nama_kompetisi.required'   => 'Nama Kompetisi wajib diisi.',
+            'nama_cabang.required'      => 'Nama Cabang wajib diisi.',
+            'peringkat.required'        => 'Peringkat wajib dipilih.',
+            'nama_penyelenggara.required' => 'Nama Penyelenggara wajib diisi.',
         ]);
 
-        // Clean empty rows from array
         $mahasiswa = array_values(array_filter($request->input('data_mahasiswa', []), function ($item) {
             return !empty($item['nim']) || !empty($item['nama']);
         }));
@@ -160,6 +167,13 @@ class PrestasiMandiriController extends Controller
             'keterangan'              => ['nullable', 'string'],
             'data_mahasiswa'          => ['nullable', 'array'],
             'data_dosen'              => ['nullable', 'array'],
+        ], [
+            'level.required'            => 'Level wajib dipilih.',
+            'kategori.required'         => 'Kategori wajib dipilih.',
+            'nama_kompetisi.required'   => 'Nama Kompetisi wajib diisi.',
+            'nama_cabang.required'      => 'Nama Cabang wajib diisi.',
+            'peringkat.required'        => 'Peringkat wajib dipilih.',
+            'nama_penyelenggara.required' => 'Nama Penyelenggara wajib diisi.',
         ]);
 
         $mahasiswa = array_values(array_filter($request->input('data_mahasiswa', []), function ($item) {

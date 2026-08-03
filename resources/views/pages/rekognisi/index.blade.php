@@ -1,0 +1,110 @@
+@extends('layouts.dashboard.template')
+
+@section('content')
+<div class="pagetitle">
+    <h1>Rekognisi</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Daftar Rekognisi</li>
+        </ol>
+    </nav>
+    <p class="text-muted small">Kelola rekognisi, peserta mahasiswa, dan dosen pendamping.</p>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row">
+        <!-- SIMKATMAWA Soft Blue Info Banner -->
+        <div class="col-12 mb-3">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">Rekognisi</span>
+                            <h5 class="fw-bold text-dark mb-1">Form terpadu untuk rekognisi dan peserta</h5>
+                            <p class="text-secondary small mb-0">Gunakan tombol tambah atau edit untuk mengisi data rekognisi, mahasiswa, dan dosen dalam satu form.</p>
+                        </div>
+                        <div class="col-md-5 mt-3 mt-md-0">
+                            <div class="d-flex gap-2 justify-content-md-end">
+                                <input type="text" id="filter-search" class="form-control form-control-sm bg-white" placeholder="Cari nama, level, tahun, atau PT" style="max-width: 220px;">
+                                <select id="filter-tahun" class="form-select form-select-sm bg-white" style="max-width: 140px;">
+                                    <option value="">Semua Tahun</option>
+                                    @for($y = date('Y'); $y >= 2020; $y--)
+                                        <option value="{{ $y }}">{{ $y }}</option>
+                                    @endfor
+                                </select>
+                                <button type="button" id="btn-apply-filter" class="btn btn-sm btn-light border shadow-sm">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+                    <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+                    <div>{{ session('success') }}</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="card-title fw-bold m-0 p-0 text-dark">Daftar Rekognisi</h5>
+                            <small class="text-muted">Menampilkan data sesuai cakupan perguruan tinggi pengguna untuk semua tahun.</small>
+                        </div>
+                        <a href="{{ route('rekognisi.create') }}" class="btn btn-dark btn-sm px-3 rounded-2 shadow-sm" style="background-color: #0f172a; border-color: #0f172a;">
+                            <i class="bi bi-plus-lg me-1"></i> + Tambah Data
+                        </a>
+                    </div>
+
+                    <div class="table-responsive">
+                       {{ $dataTable->table([
+                                'class' => 'table table-hover align-middle w-100',
+                                'style' => 'width:100%; overflow-x: auto',
+                            ]) }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+@endsection
+
+@push('scripts')
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if(app()->environment('production'))
+        {!! str_replace('http:', 'https:', $dataTable->scripts()) !!}
+    @else
+        {!! $dataTable->scripts() !!}
+    @endif
+    <script>
+        $(document).on('click', '.btn-delete', function (e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data rekognisi ini akan dihapus permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
+@endpush

@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InstitusiController;
 use App\Http\Controllers\PrestasiMandiriController;
+use App\Http\Controllers\RekognisiController;
+use App\Http\Controllers\SertifikasiController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,4 +33,13 @@ Route::middleware(['auth', 'checkrole'])->group(function () {
 
     // Prestasi Mandiri Resource Routes
     Route::resource('prestasi-mandiri', PrestasiMandiriController::class);
+
+    // Rekognisi Resource Routes
+    Route::resource('rekognisi', RekognisiController::class);
+
+    // Sertifikasi Resource Routes
+    Route::resource('sertifikasi', SertifikasiController::class);
+
+    // Institusi Resource Routes
+    Route::resource('institusi', InstitusiController::class);
 });
