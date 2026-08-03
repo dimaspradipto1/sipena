@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             RekognisiSeeder::class,
             SertifikasiSeeder::class,
             InstitusiSeeder::class,
+            KejuaraanSeeder::class,
         ]);
     }
 }

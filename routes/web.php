@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InstitusiController;
+use App\Http\Controllers\KejuaraanController;
 use App\Http\Controllers\PrestasiBelmawaController;
 use App\Http\Controllers\PrestasiMandiriController;
 use App\Http\Controllers\RekognisiController;
@@ -43,6 +44,9 @@ Route::middleware(['auth', 'checkrole'])->group(function () {
 
     // Sertifikasi Resource Routes
     Route::resource('sertifikasi', SertifikasiController::class);
+
+    // Kejuaraan / Ajang / Lomba Resource Routes
+    Route::resource('kejuaraan', KejuaraanController::class);
 
     // Institusi Resource Routes
     Route::resource('institusi', InstitusiController::class);

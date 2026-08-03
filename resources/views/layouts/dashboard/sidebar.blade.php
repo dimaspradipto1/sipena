@@ -1,31 +1,50 @@
+<!-- ======= Sidebar ======= -->
+<aside id="sidebar" class="sidebar">
 
-  <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
+  <ul class="sidebar-nav" id="sidebar-nav">
 
-    <ul class="sidebar-nav" id="sidebar-nav">
+    <!-- 1. Dashboard -->
+    <li class="nav-item">
+      <a class="nav-link {{ request()->routeIs('dashboard.index') ? '' : 'collapsed' }}" href="{{ route('dashboard.index') }}">
+        <i class="bi bi-grid"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
 
+    <!-- 2. Penyelenggara (Superadmin, Admin BKAK, Kabid, Staff, Pimpinan, Prodi) -->
+    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi']))
       <li class="nav-item">
-        <a class="nav-link " href="{{ route('dashboard.index') }}">
-          <i class="bi bi-grid"></i>
-          <span>Dashboard</span>
+        <a class="nav-link {{ request()->routeIs('kejuaraan.*') ? '' : 'collapsed' }}" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-layout-text-window-reverse"></i><span>Penyelenggara</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
+        <ul id="tables-nav" class="nav-content collapse {{ request()->routeIs('kejuaraan.*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('kejuaraan.index') }}" class="{{ request()->routeIs('kejuaraan.*') ? 'active' : '' }}">
+              <i class="bi bi-circle"></i><span>Kejuaraan / Ajang / Lomba</span>
+            </a>
+          </li>
+        </ul>
       </li>
+    @endif
 
-      <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('prestasi-belmawa.*', 'prestasi-mandiri.*', 'rekognisi.*', 'sertifikasi.*') ? '' : 'collapsed' }}" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-award"></i><span>Prestasi</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="components-nav" class="nav-content collapse {{ request()->routeIs('prestasi-belmawa.*', 'prestasi-mandiri.*', 'rekognisi.*', 'sertifikasi.*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="{{ route('prestasi-belmawa.index') }}" class="{{ request()->routeIs('prestasi-belmawa.*') ? 'active' : '' }}">
-              <i class="bi bi-circle"></i><span>Prestasi Belmawa</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('prestasi-mandiri.index') }}" class="{{ request()->routeIs('prestasi-mandiri.*') ? 'active' : '' }}">
-              <i class="bi bi-circle"></i><span>Prestasi Mandiri</span>
-            </a>
-          </li>
+    <!-- 3. Prestasi (All Roles) -->
+    <li class="nav-item">
+      <a class="nav-link {{ request()->routeIs('prestasi-belmawa.*', 'prestasi-mandiri.*', 'rekognisi.*', 'sertifikasi.*') ? '' : 'collapsed' }}" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-award"></i><span>Prestasi</span><i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <ul id="components-nav" class="nav-content collapse {{ request()->routeIs('prestasi-belmawa.*', 'prestasi-mandiri.*', 'rekognisi.*', 'sertifikasi.*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+        <li>
+          <a href="{{ route('prestasi-belmawa.index') }}" class="{{ request()->routeIs('prestasi-belmawa.*') ? 'active' : '' }}">
+            <i class="bi bi-circle"></i><span>Prestasi Belmawa</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ route('prestasi-mandiri.index') }}" class="{{ request()->routeIs('prestasi-mandiri.*') ? 'active' : '' }}">
+            <i class="bi bi-circle"></i><span>Prestasi Mandiri</span>
+          </a>
+        </li>
+
+        @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi', 'mahasiswa']))
           <li>
             <a href="{{ route('rekognisi.index') }}" class="{{ request()->routeIs('rekognisi.*') ? 'active' : '' }}">
               <i class="bi bi-circle"></i><span>Rekognisi</span>
@@ -36,9 +55,12 @@
               <i class="bi bi-circle"></i><span>Sertifikasi</span>
             </a>
           </li>
-        </ul>
-      </li><!-- End Components Nav -->
+        @endif
+      </ul>
+    </li>
 
+    <!-- 4. Tata Kelola (Superadmin, Admin BKAK, Kabid, Staff, Pimpinan) -->
+    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan']))
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('institusi.*') ? '' : 'collapsed' }}" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-journal-text"></i><span>Tata Kelola</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -50,22 +72,12 @@
             </a>
           </li>
         </ul>
-      </li><!-- End Forms Nav -->
+      </li>
+    @endif
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-layout-text-window-reverse"></i><span>Penyelenggara</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="tables-general.html">
-              <i class="bi bi-circle"></i><span>Kejuaran / Ajang / Lomba</span>
-            </a>
-          </li>
-        </ul>
-      </li><!-- End Tables Nav -->
-
-      <li class="nav-heading">Pages</li>
+    <!-- 5. Manajemen Pengguna (Superadmin & Admin BKAK) -->
+    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak']))
+      <li class="nav-heading">Pengaturan</li>
 
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('users.*') ? '' : 'collapsed' }}" href="{{ route('users.index') }}">
@@ -73,6 +85,8 @@
           <span>Manajemen Pengguna</span>
         </a>
       </li>
-    </ul>
+    @endif
 
-  </aside><!-- End Sidebar-->
+  </ul>
+
+</aside><!-- End Sidebar-->
