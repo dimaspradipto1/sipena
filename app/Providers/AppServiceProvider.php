@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Carbon::setLocale('id');
         if (app()->environment('production')) {
-            URL::forceSchema('https');
+            URL::forceScheme('https');
         }
     }
 }
