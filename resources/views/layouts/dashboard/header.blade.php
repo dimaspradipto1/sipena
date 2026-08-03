@@ -2,9 +2,9 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
-        <img src="assets/img/logo.png" alt="">
-        <span class="d-none d-lg-block">NiceAdmin</span>
+      <a href="{{ route('dashboard.index') }}" class="logo d-flex align-items-center">
+        <img src="{{ asset('assets/img/logo_uis.png') }}" alt="Logo UIS" style="max-height: 32px; margin-right: 6px;">
+        <span class="d-none d-lg-block" style="font-family: 'Nunito', sans-serif; font-weight: 800; color: #1e3c72; letter-spacing: 0.5px;">SIPENA UIS</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
@@ -169,14 +169,14 @@
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">M. Pathan</span>
+            <img src="{{ asset('assets/img/profile-img.jpg') }}" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{ Auth::user()->name }}</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>Mehedi Pathan</h6>
-              <span>Web Developer</span>
+              <h6>{{ Auth::user()->name }}</h6>
+              <span class="text-capitalize">{{ Auth::user()->role }}</span>
             </li>
             <li>
               <hr class="dropdown-divider">
@@ -212,11 +212,14 @@
               <hr class="dropdown-divider">
             </li>
 
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
+             <li>
+              <a class="dropdown-item d-flex align-items-center" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
+              <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                @csrf
+              </form>
             </li>
 
           </ul><!-- End Profile Dropdown Items -->
