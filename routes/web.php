@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PrestasiMandiriController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -14,4 +16,18 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::middleware(['auth', 'checkrole'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
+    // Profile Routes
+    Route::get('/profile', [AuthController::class, 'profile'])->name('profile.show');
+    Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+
+    // Change Password Routes
+    Route::get('/change-password', [AuthController::class, 'editPassword'])->name('password.edit');
+    Route::put('/change-password', [AuthController::class, 'updatePassword'])->name('password.update');
+
+    // User Management Resource Routes
+    Route::resource('users', UserController::class);
+
+    // Prestasi Mandiri Resource Routes
+    Route::resource('prestasi-mandiri', PrestasiMandiriController::class);
 });

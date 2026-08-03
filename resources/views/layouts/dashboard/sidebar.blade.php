@@ -12,33 +12,28 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-menu-button-wide"></i><span>prestasi</span><i class="bi bi-chevron-down ms-auto"></i>
+        <a class="nav-link {{ request()->routeIs('prestasi-mandiri.*') ? '' : 'collapsed' }}" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-award"></i><span>Prestasi</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="components-nav" class="nav-content collapse {{ request()->routeIs('prestasi-mandiri.*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
           <li>
-            <a href="components-alerts.html">
+            <a href="#">
               <i class="bi bi-circle"></i><span>Prestasi Belmawa</span>
             </a>
           </li>
           <li>
-            <a href="components-alerts.html">
+            <a href="{{ route('prestasi-mandiri.index') }}" class="{{ request()->routeIs('prestasi-mandiri.*') ? 'active' : '' }}">
               <i class="bi bi-circle"></i><span>Prestasi Mandiri</span>
             </a>
           </li>
           <li>
-            <a href="components-accordion.html">
-              <i class="bi bi-circle"></i><span>Prestasi Mandiri</span>
-            </a>
-          </li>
-          <li>
-            <a href="components-badges.html">
+            <a href="#">
               <i class="bi bi-circle"></i><span>Rekognisi</span>
             </a>
           </li>
           <li>
-            <a href="components-breadcrumbs.html">
-              <i class="bi bi-circle"></i><span>Sertifikas</span>
+            <a href="#">
+              <i class="bi bi-circle"></i><span>Sertifikasi</span>
             </a>
           </li>
         </ul>
@@ -73,8 +68,8 @@
       <li class="nav-heading">Pages</li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="users-profile.html">
-          <i class="bi bi-person"></i>
+        <a class="nav-link {{ request()->routeIs('users.*') ? '' : 'collapsed' }}" href="{{ route('users.index') }}">
+          <i class="bi bi-people"></i>
           <span>Manajemen Pengguna</span>
         </a>
       </li>
