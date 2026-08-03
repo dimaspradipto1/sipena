@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\PrestasiMandiriDataTable;
 use App\Models\PrestasiMandiri;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
 
 class PrestasiMandiriController extends Controller
 {
@@ -52,75 +52,9 @@ class PrestasiMandiriController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(PrestasiMandiriDataTable $dataTable)
     {
-        if ($request->ajax()) {
-            $query = PrestasiMandiri::query();
-
-            // Filter Level
-            if ($request->filled('level')) {
-                $query->where('level', $request->level);
-            }
-
-            // Filter Kategori
-            if ($request->filled('kategori')) {
-                $query->where('kategori', $request->kategori);
-            }
-
-            // Filter Tahun
-            if ($request->filled('tahun')) {
-                $query->where('tahun', $request->tahun);
-            }
-
-            return DataTables::of($query->latest())
-                ->addColumn('id_formatted', function ($item) {
-                    return '<span class="fw-bold text-dark">#' . str_pad($item->id, 6, '0', STR_PAD_LEFT) . '</span>';
-                })
-                ->addColumn('lomba_kompetisi', function ($item) {
-                    return '<div>
-                        <div class="fw-bold text-primary">' . e($item->nama_kompetisi) . '</div>
-                        <small class="text-muted">' . e($item->level) . ' &bull; ' . e($item->kategori) . '</small>
-                    </div>';
-                })
-                ->editColumn('nama_cabang', function ($item) {
-                    return '<span class="text-dark">' . e($item->nama_cabang) . '</span>';
-                })
-                ->editColumn('peringkat', function ($item) {
-                    return '<span class="fw-medium">' . e($item->peringkat) . '</span>';
-                })
-                ->addColumn('tahun_display', function ($item) {
-                    return $item->tahun ?? ($item->created_at ? $item->created_at->format('Y') : date('Y'));
-                })
-                ->editColumn('pt', function ($item) {
-                    return '<span class="small text-secondary">' . e($item->pt ?? 'Universitas Ibnu Sina') . '</span>';
-                })
-                ->editColumn('status', function ($item) {
-                    return '<span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">' . e($item->status ?? 'Terverifikasi') . '</span>';
-                })
-                ->addColumn('action', function ($item) {
-                    $editUrl = route('prestasi-mandiri.edit', $item->id);
-                    $showUrl = route('prestasi-mandiri.show', $item->id);
-                    $deleteUrl = route('prestasi-mandiri.destroy', $item->id);
-                    $csrf = csrf_field();
-                    $method = method_field('DELETE');
-
-                    return '
-                        <div class="btn-group" role="group">
-                            <a href="' . $showUrl . '" class="btn btn-sm btn-outline-info me-1"><i class="bi bi-eye"></i></a>
-                            <a href="' . $editUrl . '" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-pencil"></i></a>
-                            <form action="' . $deleteUrl . '" method="POST" class="d-inline delete-form">
-                                ' . $csrf . '
-                                ' . $method . '
-                                <button type="button" class="btn btn-sm btn-outline-danger btn-delete"><i class="bi bi-trash"></i></button>
-                            </form>
-                        </div>';
-                })
-                ->rawColumns(['id_formatted', 'lomba_kompetisi', 'nama_cabang', 'peringkat', 'pt', 'status', 'action'])
-                ->make(true);
-        }
-
-        $options = $this->getFormOptions();
-        return view('pages.prestasi-mandiri.index', $options);
+        return $dataTable->render('pages.prestasi-mandiri.index');
     }
 
     /**
@@ -130,7 +64,7 @@ class PrestasiMandiriController extends Controller
     {
         $options = $this->getFormOptions();
         $prestasiMandiri = new PrestasiMandiri();
-        return view('pages.prestasi-mandiri.form', compact('options', 'prestasiMandiri'));
+        return view('pages.prestasi-mandiri.create', compact('options', 'prestasiMandiri'));
     }
 
     /**
@@ -200,7 +134,7 @@ class PrestasiMandiriController extends Controller
     public function edit(PrestasiMandiri $prestasiMandiri)
     {
         $options = $this->getFormOptions();
-        return view('pages.prestasi-mandiri.form', compact('options', 'prestasiMandiri'));
+        return view('pages.prestasi-mandiri.edit', compact('options', 'prestasiMandiri'));
     }
 
     /**

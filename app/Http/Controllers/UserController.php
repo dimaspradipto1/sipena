@@ -2,70 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\UserDataTable;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(UserDataTable $dataTable)
     {
-        if ($request->ajax()) {
-            $users = User::query();
-
-            return DataTables::of($users)
-                ->addIndexColumn()
-                ->editColumn('role', function ($user) {
-                    $badgeClasses = [
-                        'superadmin'       => 'bg-danger',
-                        'adminbkak'        => 'bg-warning text-dark',
-                        'kabid'            => 'bg-info text-dark',
-                        'staff'            => 'bg-primary',
-                        'pimpinan'         => 'bg-dark',
-                        'prodi'            => 'bg-secondary',
-                        'dosenpendamping'  => 'bg-success',
-                        'mahasiswa'        => 'bg-info',
-                    ];
-                    $bgClass = $badgeClasses[$user->role] ?? 'bg-secondary';
-                    return '<span class="badge ' . $bgClass . '">' . e(strtoupper($user->role)) . '</span>';
-                })
-                ->editColumn('is_active', function ($user) {
-                    if ($user->is_active) {
-                        return '<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Aktif</span>';
-                    }
-                    return '<span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i> Non-Aktif</span>';
-                })
-                ->addColumn('action', function ($user) {
-                    $editUrl = route('users.edit', $user->id);
-                    $deleteUrl = route('users.destroy', $user->id);
-                    $csrf = csrf_field();
-                    $method = method_field('DELETE');
-
-                    $btnEdit = '<a href="' . $editUrl . '" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-pencil-square"></i> Edit</a>';
-                    
-                    if (Auth::id() === $user->id) {
-                        $btnDelete = '<button class="btn btn-sm btn-outline-secondary" disabled><i class="bi bi-trash"></i> Hapus</button>';
-                    } else {
-                        $btnDelete = '
-                            <form action="' . $deleteUrl . '" method="POST" class="d-inline delete-form">
-                                ' . $csrf . '
-                                ' . $method . '
-                                <button type="button" class="btn btn-sm btn-outline-danger btn-delete" data-id="' . $user->id . '"><i class="bi bi-trash"></i> Hapus</button>
-                            </form>';
-                    }
-
-                    return '<div class="btn-group" role="group">' . $btnEdit . $btnDelete . '</div>';
-                })
-                ->rawColumns(['role', 'is_active', 'action'])
-                ->make(true);
-        }
-
-        return view('pages.users.index');
+        return $dataTable->render('pages.users.index');
     }
 
     /**
