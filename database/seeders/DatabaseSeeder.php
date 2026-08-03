@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            PrestasiBelmawaSeeder::class,
             PrestasiMandiriSeeder::class,
             RekognisiSeeder::class,
             SertifikasiSeeder::class,

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InstitusiController;
+use App\Http\Controllers\PrestasiBelmawaController;
 use App\Http\Controllers\PrestasiMandiriController;
 use App\Http\Controllers\RekognisiController;
 use App\Http\Controllers\SertifikasiController;
@@ -30,6 +31,9 @@ Route::middleware(['auth', 'checkrole'])->group(function () {
 
     // User Management Resource Routes
     Route::resource('users', UserController::class);
+
+    // Prestasi Belmawa Resource Routes
+    Route::resource('prestasi-belmawa', PrestasiBelmawaController::class);
 
     // Prestasi Mandiri Resource Routes
     Route::resource('prestasi-mandiri', PrestasiMandiriController::class);
