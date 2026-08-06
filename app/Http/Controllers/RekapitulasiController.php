@@ -33,7 +33,7 @@ class RekapitulasiController extends Controller
      */
     private function getConsolidatedData(Request $request): array
     {
-        $selectedTahun = $request->query('tahun', 'all');
+        $selectedTahun = $request->query('tahun', date('Y'));
         $selectedProdi = $request->query('prodi', 'all');
         $selectedJenis = $request->query('jenis', 'all');
         $selectedModul = $request->query('modul', 'all');
@@ -53,14 +53,11 @@ class RekapitulasiController extends Controller
             ->concat($allKejuaraan->pluck('tahun'))
             ->filter()
             ->map(fn($y) => (int)$y)
+            ->push((int)date('Y'))
             ->unique()
             ->sortDesc()
             ->values()
             ->toArray();
-
-        if (empty($availableYears)) {
-            $availableYears = [(int)date('Y')];
-        }
 
         $records = [];
 

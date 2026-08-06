@@ -116,11 +116,11 @@
 
                 <!-- Buttons -->
                 <div class="col-md-2 col-sm-6 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary fw-semibold w-100 shadow-sm">
+                    <button type="submit" class="btn btn-primary fw-semibold w-100 shadow-sm d-inline-flex align-items-center justify-content-center text-nowrap" style="height: 38px; font-size: 0.88rem;">
                         <i class="bi bi-search me-1"></i> Terapkan
                     </button>
                     @if($selectedTahun !== 'all' || $selectedProdi !== 'all' || $selectedJenis !== 'all')
-                        <a href="{{ route('dashboard.index') }}" class="btn btn-light border shadow-sm" title="Reset Filter">
+                        <a href="{{ route('dashboard.index') }}" class="btn btn-light border shadow-sm d-inline-flex align-items-center justify-content-center" style="height: 38px; width: 42px;">
                             <i class="bi bi-arrow-counterclockwise text-secondary"></i>
                         </a>
                     @endif

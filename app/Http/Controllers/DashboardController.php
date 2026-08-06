@@ -15,7 +15,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $selectedTahun = $request->query('tahun', 'all');
+        $selectedTahun = $request->query('tahun', date('Y'));
         $selectedProdi = $request->query('prodi', 'all');
         $selectedJenis = $request->query('jenis', 'all');
 
@@ -47,12 +47,13 @@ class DashboardController extends Controller
             ->concat($allKejuaraan->pluck('tahun'))
             ->filter()
             ->map(fn($y) => (int) $y)
+            ->push((int) date('Y'))
             ->unique()
             ->sortDesc()
             ->values()
             ->toArray();
 
-        $availableYears = !empty($yearsFromDb) ? $yearsFromDb : [date('Y')];
+        $availableYears = $yearsFromDb;
 
         // Helper to extract prodi from item
         $getProdisFromItem = function ($item, $type) {
