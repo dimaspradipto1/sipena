@@ -6,6 +6,7 @@ use App\Http\Controllers\InstitusiController;
 use App\Http\Controllers\KejuaraanController;
 use App\Http\Controllers\PrestasiBelmawaController;
 use App\Http\Controllers\PrestasiMandiriController;
+use App\Http\Controllers\RekapitulasiController;
 use App\Http\Controllers\RekognisiController;
 use App\Http\Controllers\SertifikasiController;
 use App\Http\Controllers\UserController;
@@ -21,6 +22,11 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::middleware(['auth', 'checkrole'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
+    // Rekapitulasi & Pelaporan Routes
+    Route::get('/rekapitulasi', [RekapitulasiController::class, 'index'])->name('rekapitulasi.index');
+    Route::get('/rekapitulasi/pdf', [RekapitulasiController::class, 'exportPdf'])->name('rekapitulasi.pdf');
+    Route::get('/rekapitulasi/excel', [RekapitulasiController::class, 'exportExcel'])->name('rekapitulasi.excel');
 
     // Profile Routes
     Route::get('/profile', [AuthController::class, 'profile'])->name('profile.show');

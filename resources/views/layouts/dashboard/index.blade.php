@@ -62,6 +62,73 @@
         </div>
     </div>
 
+    <!-- Filter Control Panel Card -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h6 class="fw-bold text-dark m-0 d-flex align-items-center">
+                <i class="bi bi-funnel-fill text-primary me-2 fs-5"></i> Filter Analytics Dashboard
+            </h6>
+            @if($selectedTahun !== 'all' || $selectedProdi !== 'all' || $selectedJenis !== 'all')
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-medium" style="font-size: 0.8rem;">
+                    <i class="bi bi-filter me-1"></i> Filter Aktif
+                </span>
+            @endif
+        </div>
+        <div class="card-body p-4 pt-1">
+            <form action="{{ route('dashboard.index') }}" method="GET" class="row g-3 align-items-end">
+                <!-- Filter Tahun -->
+                <div class="col-md-3 col-sm-6">
+                    <label class="form-label text-muted small fw-semibold mb-1">
+                        <i class="bi bi-calendar-event me-1 text-primary"></i> Filter Tahun
+                    </label>
+                    <select name="tahun" class="form-select border-primary-subtle shadow-sm" style="font-size: 0.88rem;">
+                        <option value="all" {{ $selectedTahun === 'all' ? 'selected' : '' }}>-- Semua Tahun --</option>
+                        @foreach($availableYears as $y)
+                            <option value="{{ $y }}" {{ (string)$selectedTahun === (string)$y ? 'selected' : '' }}>Tahun {{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Filter Program Studi -->
+                <div class="col-md-4 col-sm-6">
+                    <label class="form-label text-muted small fw-semibold mb-1">
+                        <i class="bi bi-building me-1 text-primary"></i> Filter Program Studi
+                    </label>
+                    <select name="prodi" class="form-select border-primary-subtle shadow-sm" style="font-size: 0.88rem;">
+                        <option value="all" {{ $selectedProdi === 'all' ? 'selected' : '' }}>-- Semua Program Studi --</option>
+                        @foreach($defaultProdis as $p)
+                            <option value="{{ $p }}" {{ $selectedProdi === $p ? 'selected' : '' }}>{{ $p }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Filter Akademik vs Non-Akademik -->
+                <div class="col-md-3 col-sm-6">
+                    <label class="form-label text-muted small fw-semibold mb-1">
+                        <i class="bi bi-award me-1 text-primary"></i> Jenis Prestasi
+                    </label>
+                    <select name="jenis" class="form-select border-primary-subtle shadow-sm" style="font-size: 0.88rem;">
+                        <option value="all" {{ $selectedJenis === 'all' ? 'selected' : '' }}>-- Semua Kategori --</option>
+                        <option value="Akademik" {{ strtolower($selectedJenis) === 'akademik' ? 'selected' : '' }}>Akademik</option>
+                        <option value="Non-Akademik" {{ strtolower($selectedJenis) === 'non-akademik' ? 'selected' : '' }}>Non-Akademik</option>
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <div class="col-md-2 col-sm-6 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary fw-semibold w-100 shadow-sm">
+                        <i class="bi bi-search me-1"></i> Terapkan
+                    </button>
+                    @if($selectedTahun !== 'all' || $selectedProdi !== 'all' || $selectedJenis !== 'all')
+                        <a href="{{ route('dashboard.index') }}" class="btn btn-light border shadow-sm" title="Reset Filter">
+                            <i class="bi bi-arrow-counterclockwise text-secondary"></i>
+                        </a>
+                    @endif
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Statistics Cards Grid -->
     <div class="row g-3 mb-4">
         <!-- Prestasi Mandiri -->
@@ -134,6 +201,54 @@
                             <small class="text-muted" style="font-size: 0.75rem;">Capaian Akademik</small>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Visualizations Row -->
+    <div class="row g-4 mb-4">
+        <!-- Chart 1: Pemetaan per Program Studi -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold text-dark m-0">
+                        <i class="bi bi-bar-chart-line-fill text-primary me-2"></i> Pemetaan Prestasi per Program Studi
+                    </h6>
+                    <span class="badge bg-light text-muted border">Bar Chart</span>
+                </div>
+                <div class="card-body p-3">
+                    <div id="chartProdi" style="min-height: 320px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart 2: Komparasi Akademik vs Non-Akademik -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold text-dark m-0">
+                        <i class="bi bi-pie-chart-fill text-warning me-2"></i> Akademik vs Non-Akademik
+                    </h6>
+                    <span class="badge bg-light text-muted border">Donut Chart</span>
+                </div>
+                <div class="card-body p-3 d-flex align-items-center justify-content-center">
+                    <div id="chartJenis" class="w-100" style="min-height: 320px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart 3: Tren Prestasi per Tahun -->
+        <div class="col-lg-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold text-dark m-0">
+                        <i class="bi bi-graph-up-arrow text-success me-2"></i> Tren Perolehan Prestasi per Tahun
+                    </h6>
+                    <span class="badge bg-light text-muted border">Line / Area Chart</span>
+                </div>
+                <div class="card-body p-3">
+                    <div id="chartTahun" style="min-height: 300px;"></div>
                 </div>
             </div>
         </div>
@@ -280,4 +395,131 @@
         </div>
     </div>
 </section>
+
+@push('scripts')
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Data from Controller
+    const prodiLabels = @json($chartProdiLabels);
+    const prodiSeries = @json($chartProdiSeries);
+    const jenisLabels = @json($chartJenisLabels);
+    const jenisSeries = @json($chartJenisSeries);
+    const timelineYears = @json($timelineYears);
+    const tahunSeries = @json($chartTahunSeries);
+
+    // 1. Chart per Program Studi (Bar Chart)
+    const optionsProdi = {
+        series: [{
+            name: 'Total Prestasi',
+            data: prodiSeries
+        }],
+        chart: {
+            type: 'bar',
+            height: 320,
+            toolbar: { show: false },
+            fontFamily: 'Nunito, sans-serif'
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: 6,
+                horizontal: true,
+                distributed: true,
+                barHeight: '60%',
+            }
+        },
+        colors: ['#2563eb', '#3b82f6', '#0284c7', '#06b6d4', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'],
+        dataLabels: {
+            enabled: true,
+            style: { colors: ['#fff'], fontSize: '12px', fontWeight: 'bold' }
+        },
+        xaxis: {
+            categories: prodiLabels,
+            labels: { style: { fontSize: '11px', fontWeight: 600 } }
+        },
+        legend: { show: false },
+        tooltip: {
+            theme: 'dark',
+            y: { formatter: (val) => val + ' Capaian Prestasi' }
+        }
+    };
+    new ApexCharts(document.querySelector("#chartProdi"), optionsProdi).render();
+
+    // 2. Chart Akademik vs Non-Akademik (Donut Chart)
+    const optionsJenis = {
+        series: jenisSeries,
+        labels: jenisLabels,
+        chart: {
+            type: 'donut',
+            height: 320,
+            fontFamily: 'Nunito, sans-serif'
+        },
+        colors: ['#2563eb', '#f59e0b'],
+        stroke: { show: true, colors: ['#ffffff'], width: 3 },
+        dataLabels: { enabled: true },
+        legend: { position: 'bottom', fontSize: '13px', fontWeight: 600 },
+        plotOptions: {
+            pie: {
+                donut: {
+                    size: '68%',
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true,
+                            label: 'Total Kategori',
+                            formatter: function (w) {
+                                return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        tooltip: {
+            theme: 'dark',
+            y: { formatter: (val) => val + ' Prestasi' }
+        }
+    };
+    new ApexCharts(document.querySelector("#chartJenis"), optionsJenis).render();
+
+    // 3. Chart Tren per Tahun (Area Chart)
+    const optionsTahun = {
+        series: [{
+            name: 'Prestasi & Capaian',
+            data: tahunSeries
+        }],
+        chart: {
+            type: 'area',
+            height: 300,
+            toolbar: { show: false },
+            fontFamily: 'Nunito, sans-serif'
+        },
+        colors: ['#10b981'],
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.45,
+                opacityTo: 0.05,
+                stops: [0, 90, 100]
+            }
+        },
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: 3 },
+        xaxis: {
+            categories: timelineYears,
+            title: { text: 'Tahun Capaian', style: { fontWeight: 600 } }
+        },
+        yaxis: {
+            title: { text: 'Jumlah Prestasi', style: { fontWeight: 600 } },
+            allowDecimals: false
+        },
+        tooltip: {
+            theme: 'dark',
+            y: { formatter: (val) => val + ' Prestasi' }
+        }
+    };
+    new ApexCharts(document.querySelector("#chartTahun"), optionsTahun).render();
+});
+</script>
+@endpush
 @endsection

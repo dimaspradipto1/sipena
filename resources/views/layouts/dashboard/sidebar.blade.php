@@ -11,6 +11,16 @@
       </a>
     </li>
 
+    <!-- Rekapitulasi & Laporan (Superadmin, Admin BKAK, Kabid, Staff, Pimpinan, Prodi, Dosen Pendamping) -->
+    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi', 'dosenpendamping']))
+    <li class="nav-item">
+      <a class="nav-link {{ request()->routeIs('rekapitulasi.*') ? '' : 'collapsed' }}" href="{{ route('rekapitulasi.index') }}">
+        <i class="bi bi-file-earmark-bar-graph"></i>
+        <span>Rekapitulasi & Laporan</span>
+      </a>
+    </li>
+    @endif
+
     <!-- 2. Penyelenggara (Superadmin, Admin BKAK, Kabid, Staff, Pimpinan, Prodi) -->
     @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi']))
       <li class="nav-item">

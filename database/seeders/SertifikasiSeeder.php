@@ -27,7 +27,7 @@ class SertifikasiSeeder extends Seeder
                 'pt'                      => 'Universitas Ibnu Sina',
                 'status'                  => 'Terverifikasi',
                 'data_mahasiswa'          => [
-                    ['nim' => '1910128262190', 'nama' => 'Frida ayu wulandari']
+                    ['nim' => '1910128262190', 'nama' => 'Frida ayu wulandari', 'prodi' => 'Teknik Informatika']
                 ],
                 'data_dosen'              => [
                     ['nidn' => '0012058501', 'nama' => 'Hendra Wijaya, S.T., M.Eng.', 'url_surat' => 'https://example.com/surat-tugas.pdf']
@@ -47,7 +47,7 @@ class SertifikasiSeeder extends Seeder
                 'pt'                      => 'Universitas Ibnu Sina',
                 'status'                  => 'Terverifikasi',
                 'data_mahasiswa'          => [
-                    ['nim' => '2010128262001', 'nama' => 'Rizky Pratama Putra']
+                    ['nim' => '2010128262001', 'nama' => 'Rizky Pratama Putra', 'prodi' => 'Sistem Informasi']
                 ],
                 'data_dosen'              => []
             ],
@@ -65,7 +65,7 @@ class SertifikasiSeeder extends Seeder
                 'pt'                      => 'Universitas Ibnu Sina',
                 'status'                  => 'Terverifikasi',
                 'data_mahasiswa'          => [
-                    ['nim' => '2110128262015', 'nama' => 'Anisa Nurul Hidayah']
+                    ['nim' => '2110128262015', 'nama' => 'Anisa Nurul Hidayah', 'prodi' => 'Manajemen']
                 ],
                 'data_dosen'              => []
             ],
