@@ -85,10 +85,31 @@ class DashboardController extends Controller
             return 'Non-Akademik';
         };
 
+        // Helper to check if item belongs to current student (when role == mahasiswa)
+        $isForCurrentStudent = function ($item, $type) {
+            $user = auth()->user();
+            if (!$user || $user->role !== 'mahasiswa') {
+                return true;
+            }
+            $studentName = strtolower(trim($user->name));
+            if ($type === 'belmawa') {
+                return str_contains(strtolower($item->nama_mahasiswa ?? ''), $studentName);
+            }
+            if (!empty($item->data_mahasiswa) && is_array($item->data_mahasiswa)) {
+                foreach ($item->data_mahasiswa as $mhs) {
+                    if (!empty($mhs['nama']) && str_contains(strtolower($mhs['nama']), $studentName)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+
         // Standardized Dataset items
         $dataset = [];
 
         foreach ($allMandiri as $item) {
+            if (!$isForCurrentStudent($item, 'mandiri')) continue;
             $prodis = $getProdisFromItem($item, 'mandiri');
             $jenis  = $getJenisFromItem($item, 'mandiri');
             $dataset[] = [
@@ -101,6 +122,7 @@ class DashboardController extends Controller
         }
 
         foreach ($allBelmawa as $item) {
+            if (!$isForCurrentStudent($item, 'belmawa')) continue;
             $prodis = $getProdisFromItem($item, 'belmawa');
             $jenis  = $getJenisFromItem($item, 'belmawa');
             $dataset[] = [
@@ -113,6 +135,7 @@ class DashboardController extends Controller
         }
 
         foreach ($allRekognisi as $item) {
+            if (!$isForCurrentStudent($item, 'rekognisi')) continue;
             $prodis = $getProdisFromItem($item, 'rekognisi');
             $jenis  = $getJenisFromItem($item, 'rekognisi');
             $dataset[] = [
@@ -125,6 +148,7 @@ class DashboardController extends Controller
         }
 
         foreach ($allSertifikasi as $item) {
+            if (!$isForCurrentStudent($item, 'sertifikasi')) continue;
             $prodis = $getProdisFromItem($item, 'sertifikasi');
             $jenis  = $getJenisFromItem($item, 'sertifikasi');
             $dataset[] = [
@@ -195,8 +219,8 @@ class DashboardController extends Controller
         }
 
         // Latest Data
-        $latestBelmawa   = $allBelmawa->sortByDesc('created_at')->take(5);
-        $latestMandiri   = $allMandiri->sortByDesc('created_at')->take(5);
+        $latestBelmawa   = $allBelmawa->filter(fn($item) => $isForCurrentStudent($item, 'belmawa'))->sortByDesc('created_at')->take(5);
+        $latestMandiri   = $allMandiri->filter(fn($item) => $isForCurrentStudent($item, 'mandiri'))->sortByDesc('created_at')->take(5);
         $latestKejuaraan = $allKejuaraan->sortByDesc('created_at')->take(5);
 
         return view('layouts.dashboard.index', compact(

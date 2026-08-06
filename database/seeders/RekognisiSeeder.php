@@ -28,7 +28,7 @@ class RekognisiSeeder extends Seeder
                 'pt'                      => 'Universitas Ibnu Sina',
                 'status'                  => 'Terverifikasi',
                 'data_mahasiswa'          => [
-                    ['nim' => '1910128262190', 'nama' => 'Frida ayu wulandari']
+                    ['nim' => '1910128262190', 'nama' => 'Frida Ayu Wulandari', 'prodi' => 'Teknik Informatika']
                 ],
                 'data_dosen'              => [
                     ['nidn' => '0012058501', 'nama' => 'Hendra Wijaya, S.T., M.Eng.', 'url_surat' => 'https://example.com/surat-tugas.pdf']
@@ -48,7 +48,9 @@ class RekognisiSeeder extends Seeder
                 'tahun'                   => 2023,
                 'pt'                      => 'Universitas Ibnu Sina',
                 'status'                  => 'Terverifikasi',
-                'data_mahasiswa'          => [],
+                'data_mahasiswa'          => [
+                    ['nim' => '2010128262001', 'nama' => 'Rizky Pratama Putra', 'prodi' => 'Sistem Informasi']
+                ],
                 'data_dosen'              => [
                     ['nidn' => '0015087802', 'nama' => 'Dr. H. Ahmad Dahlan, M.Pd.', 'url_surat' => 'https://example.com/sk-juri.pdf']
                 ]
@@ -67,7 +69,9 @@ class RekognisiSeeder extends Seeder
                 'tahun'                   => 2024,
                 'pt'                      => 'Universitas Ibnu Sina',
                 'status'                  => 'Terverifikasi',
-                'data_mahasiswa'          => [],
+                'data_mahasiswa'          => [
+                    ['nim' => '19101280001', 'nama' => 'Mahasiswa Berprestasi', 'prodi' => 'Teknik Informatika']
+                ],
                 'data_dosen'              => [
                     ['nidn' => '0020038204', 'nama' => 'Maya Indah, S.Kom., M.T.', 'url_surat' => 'https://example.com/surat-tugas.pdf']
                 ]

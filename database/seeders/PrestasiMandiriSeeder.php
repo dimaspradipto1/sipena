@@ -33,7 +33,7 @@ class PrestasiMandiriSeeder extends Seeder
                 'pt'                      => 'Universitas Ibnu Sina',
                 'status'                  => 'Terverifikasi',
                 'data_mahasiswa'          => [
-                    ['nim' => '1910128262190', 'nama' => 'Frida ayu wulandari', 'prodi' => 'Teknik Informatika']
+                    ['nim' => '1910128262190', 'nama' => 'Frida Ayu Wulandari', 'prodi' => 'Teknik Informatika']
                 ],
                 'data_dosen'              => [
                     ['nidn' => '0012058501', 'nama' => 'Hendra Wijaya, S.T., M.Eng.', 'url_surat' => 'https://drive.google.com/file/d/surat-tugas/view']
@@ -61,7 +61,9 @@ class PrestasiMandiriSeeder extends Seeder
                 'data_mahasiswa'          => [
                     ['nim' => '2010128262001', 'nama' => 'Rizky Pratama Putra', 'prodi' => 'Sistem Informasi']
                 ],
-                'data_dosen'              => []
+                'data_dosen'              => [
+                    ['nidn' => '0020038204', 'nama' => 'Maya Indah, S.Kom., M.T.', 'url_surat' => 'https://example.com/surat-tugas/view']
+                ]
             ],
             [
                 'level'                   => 'Nasional',
@@ -107,9 +109,11 @@ class PrestasiMandiriSeeder extends Seeder
                 'pt'                      => 'Universitas Ibnu Sina',
                 'status'                  => 'Terverifikasi',
                 'data_mahasiswa'          => [
-                    ['nim' => '2210128262088', 'nama' => 'Bagus Setiawan', 'prodi' => 'Teknik Industri']
+                    ['nim' => '19101280001', 'nama' => 'Mahasiswa Berprestasi', 'prodi' => 'Teknik Informatika']
                 ],
-                'data_dosen'              => []
+                'data_dosen'              => [
+                    ['nidn' => '0099887766', 'nama' => 'Dosen Pendamping Utama', 'url_surat' => 'https://example.com/surat-tugas/view']
+                ]
             ],
             [
                 'level'                   => 'Nasional',
@@ -131,55 +135,33 @@ class PrestasiMandiriSeeder extends Seeder
                 'pt'                      => 'Universitas Ibnu Sina',
                 'status'                  => 'Terverifikasi',
                 'data_mahasiswa'          => [
-                    ['nim' => '2310128262100', 'nama' => 'Dwi Prasetyo', 'prodi' => 'Teknik Informatika']
+                    ['nim' => '1910128262190', 'nama' => 'Frida Ayu Wulandari', 'prodi' => 'Teknik Informatika']
                 ],
-                'data_dosen'              => []
-            ],
-            [
-                'level'                   => 'Nasional',
-                'kategori'                => 'Wirausaha',
-                'nama_kompetisi'          => 'National Student Entrepreneurship Challenge 2025',
-                'nama_cabang'             => 'Culinary Business',
-                'peringkat'               => 'Juara III',
-                'nama_penyelenggara'      => 'HIPMI PT',
-                'jumlah_pt_peserta'       => 50,
-                'kepesertaan'             => 'Individu',
-                'bentuk'                  => 'Luring',
-                'url_kompetisi'           => 'https://example.com/hipmi-2025',
-                'link_dokumen_sertifikat' => 'https://example.com/sertifikat-hipmi.pdf',
-                'tanggal_sertifikat'      => '2025-09-10',
-                'link_foto_upp'           => null,
-                'link_dokumen_undangan'   => null,
-                'keterangan'              => 'Pengembangan produk pangan lokal inovatif.',
-                'tahun'                   => 2025,
-                'pt'                      => 'Universitas Ibnu Sina',
-                'status'                  => 'Terverifikasi',
-                'data_mahasiswa'          => [
-                    ['nim' => '2310128262105', 'nama' => 'Rina Kartika', 'prodi' => 'Akuntansi']
-                ],
-                'data_dosen'              => []
+                'data_dosen'              => [
+                    ['nidn' => '0012058501', 'nama' => 'Hendra Wijaya, S.T., M.Eng.', 'url_surat' => 'https://example.com/surat-tugas/view']
+                ]
             ],
             [
                 'level'                   => 'Internasional',
-                'kategori'                => 'Sains, Teknologi dan Inovasi / SSI',
-                'nama_kompetisi'          => 'ASEAN Young Scientist Innovation Expo 2026',
-                'nama_cabang'             => 'Biotechnology & Health',
+                'kategori'                => 'Wirausaha',
+                'nama_kompetisi'          => 'ASEAN Youth Entrepreneur Summit 2026',
+                'nama_cabang'             => 'Social Enterprise',
                 'peringkat'               => 'Juara I',
-                'nama_penyelenggara'      => 'ASEAN Federation of Engineering Organisations',
-                'jumlah_pt_peserta'       => 120,
-                'kepesertaan'             => 'Kelompok',
+                'nama_penyelenggara'      => 'ASEAN Foundation',
+                'jumlah_pt_peserta'       => 100,
+                'kepesertaan'             => 'Individu',
                 'bentuk'                  => 'Hybrid',
-                'url_kompetisi'           => 'https://example.com/asean-innovation-2026',
+                'url_kompetisi'           => 'https://example.com/asean-youth-2026',
                 'link_dokumen_sertifikat' => 'https://example.com/sertifikat-asean.pdf',
-                'tanggal_sertifikat'      => '2026-02-18',
+                'tanggal_sertifikat'      => '2026-03-20',
                 'link_foto_upp'           => null,
                 'link_dokumen_undangan'   => null,
-                'keterangan'              => 'Inovasi alat deteksi dini penyakit berbasis sensor.',
+                'keterangan'              => 'Kompetisi wirausaha sosial pemuda tingkat ASEAN.',
                 'tahun'                   => 2026,
                 'pt'                      => 'Universitas Ibnu Sina',
                 'status'                  => 'Terverifikasi',
                 'data_mahasiswa'          => [
-                    ['nim' => '2410128262201', 'nama' => 'Ahmad Fauzi', 'prodi' => 'Farmasi']
+                    ['nim' => '19101280001', 'nama' => 'Mahasiswa Berprestasi', 'prodi' => 'Teknik Informatika']
                 ],
                 'data_dosen'              => []
             ],

@@ -27,7 +27,7 @@ class SertifikasiSeeder extends Seeder
                 'pt'                      => 'Universitas Ibnu Sina',
                 'status'                  => 'Terverifikasi',
                 'data_mahasiswa'          => [
-                    ['nim' => '1910128262190', 'nama' => 'Frida ayu wulandari', 'prodi' => 'Teknik Informatika']
+                    ['nim' => '1910128262190', 'nama' => 'Frida Ayu Wulandari', 'prodi' => 'Teknik Informatika']
                 ],
                 'data_dosen'              => [
                     ['nidn' => '0012058501', 'nama' => 'Hendra Wijaya, S.T., M.Eng.', 'url_surat' => 'https://example.com/surat-tugas.pdf']
@@ -49,7 +49,9 @@ class SertifikasiSeeder extends Seeder
                 'data_mahasiswa'          => [
                     ['nim' => '2010128262001', 'nama' => 'Rizky Pratama Putra', 'prodi' => 'Sistem Informasi']
                 ],
-                'data_dosen'              => []
+                'data_dosen'              => [
+                    ['nidn' => '0020038204', 'nama' => 'Maya Indah, S.Kom., M.T.', 'url_surat' => 'https://example.com/surat-tugas.pdf']
+                ]
             ],
             [
                 'level'                   => 'Provinsi',
@@ -68,6 +70,26 @@ class SertifikasiSeeder extends Seeder
                     ['nim' => '2110128262015', 'nama' => 'Anisa Nurul Hidayah', 'prodi' => 'Manajemen']
                 ],
                 'data_dosen'              => []
+            ],
+            [
+                'level'                   => 'Internasional',
+                'nama_sertifikasi'        => 'Oracle Certified Professional Java SE Programmer',
+                'nama_penyelenggara'      => 'Oracle Corporation',
+                'url_sertifikasi'         => 'https://example.com/oracle-java',
+                'link_dokumen_sertifikat' => 'https://example.com/oracle-cert.pdf',
+                'tanggal_sertifikat'      => '2025-05-12',
+                'link_foto_kegiatan'      => null,
+                'link_dokumen_undangan'   => null,
+                'keterangan'              => 'Sertifikasi internasional pemrograman Java.',
+                'tahun'                   => 2025,
+                'pt'                      => 'Universitas Ibnu Sina',
+                'status'                  => 'Terverifikasi',
+                'data_mahasiswa'          => [
+                    ['nim' => '19101280001', 'nama' => 'Mahasiswa Berprestasi', 'prodi' => 'Teknik Informatika']
+                ],
+                'data_dosen'              => [
+                    ['nidn' => '0012058501', 'nama' => 'Hendra Wijaya, S.T., M.Eng.', 'url_surat' => 'https://example.com/surat-tugas.pdf']
+                ]
             ],
         ];
 

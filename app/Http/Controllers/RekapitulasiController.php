@@ -175,7 +175,16 @@ class RekapitulasiController extends Controller
         }
 
         // Filter Dataset
-        $filteredRecords = array_filter($records, function ($row) use ($selectedTahun, $selectedProdi, $selectedJenis) {
+        $user = auth()->user();
+        $isMahasiswa = ($user && $user->role === 'mahasiswa');
+        $studentName = $user ? strtolower(trim($user->name)) : '';
+
+        $filteredRecords = array_filter($records, function ($row) use ($selectedTahun, $selectedProdi, $selectedJenis, $isMahasiswa, $studentName) {
+            if ($isMahasiswa) {
+                if (!str_contains(strtolower($row['mahasiswa']), $studentName)) {
+                    return false;
+                }
+            }
             if ($selectedTahun !== 'all' && (int)$row['tahun'] !== (int)$selectedTahun) {
                 return false;
             }

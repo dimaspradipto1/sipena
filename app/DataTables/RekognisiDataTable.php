@@ -70,7 +70,12 @@ class RekognisiDataTable extends DataTable
      */
     public function query(Rekognisi $model): QueryBuilder
     {
-        return $model->newQuery()->latest();
+        $query = $model->newQuery();
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa') {
+            $query->where('data_mahasiswa', 'LIKE', '%' . $user->name . '%');
+        }
+        return $query->latest();
     }
 
     /**

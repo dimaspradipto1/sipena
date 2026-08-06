@@ -73,7 +73,12 @@ class PrestasiBelmawaDataTable extends DataTable
      */
     public function query(PrestasiBelmawa $model): QueryBuilder
     {
-        return $model->newQuery();
+        $query = $model->newQuery();
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa') {
+            $query->where('nama_mahasiswa', 'LIKE', '%' . $user->name . '%');
+        }
+        return $query->latest();
     }
 
     /**
