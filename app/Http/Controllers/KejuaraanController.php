@@ -89,9 +89,9 @@ class KejuaraanController extends Controller
             'tahun.required'        => 'Tahun kegiatan wajib diisi.',
         ]);
 
-        if (empty($validated['status'])) {
-            $validated['status'] = 'Terverifikasi';
-        }
+        $validated['status'] = (auth()->check() && in_array(auth()->user()->role, ['superadmin', 'adminbkak']))
+            ? ($request->input('status', 'Terverifikasi'))
+            : 'Submitted';
 
         Kejuaraan::create($validated);
 

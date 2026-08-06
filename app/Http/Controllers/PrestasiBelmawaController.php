@@ -84,9 +84,16 @@ class PrestasiBelmawaController extends Controller
             'nama_pt.required'          => 'Nama Perguruan Tinggi wajib diisi.',
         ]);
 
-        if (empty($validated['status'])) {
-            $validated['status'] = 'Terverifikasi';
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa') {
+            if (empty($validated['nama_mahasiswa'])) {
+                $validated['nama_mahasiswa'] = $user->name;
+            }
         }
+
+        $validated['status'] = (auth()->check() && in_array(auth()->user()->role, ['superadmin', 'adminbkak']))
+            ? ($request->input('status', 'Terverifikasi'))
+            : 'Submitted';
 
         PrestasiBelmawa::create($validated);
 

@@ -69,16 +69,21 @@
       </ul>
     </li>
 
-    <!-- 4. Tata Kelola (Superadmin, Admin BKAK, Kabid, Staff, Pimpinan) -->
-    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan']))
+    <!-- 4. Tata Kelola (Superadmin, Admin BKAK, Kabid, Staff, Pimpinan, Prodi) -->
+    @if(in_array(auth()->user()->role, ['superadmin', 'adminbkak', 'kabid', 'staff', 'pimpinan', 'prodi']))
       <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('institusi.*') ? '' : 'collapsed' }}" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link {{ request()->routeIs('institusi.*', 'dosen.*') ? '' : 'collapsed' }}" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-journal-text"></i><span>Tata Kelola</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="forms-nav" class="nav-content collapse {{ request()->routeIs('institusi.*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+        <ul id="forms-nav" class="nav-content collapse {{ request()->routeIs('institusi.*', 'dosen.*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
           <li>
             <a href="{{ route('institusi.index') }}" class="{{ request()->routeIs('institusi.*') ? 'active' : '' }}">
               <i class="bi bi-circle"></i><span>Institusi</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('dosen.index') }}" class="{{ request()->routeIs('dosen.*') ? 'active' : '' }}">
+              <i class="bi bi-circle"></i><span>Data Dosen</span>
             </a>
           </li>
         </ul>

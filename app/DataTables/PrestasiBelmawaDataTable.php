@@ -50,6 +50,18 @@ class PrestasiBelmawaDataTable extends DataTable
             ->editColumn('keterangan', function (PrestasiBelmawa $model) {
                 return '<span class="text-muted small">' . e($model->keterangan ?? '-') . '</span>';
             })
+            ->editColumn('status', function (PrestasiBelmawa $model) {
+                $status = $model->status ?? 'Terverifikasi';
+                $badge = 'bg-success text-white';
+                if ($status === 'Submitted') {
+                    $badge = 'bg-warning text-dark';
+                } elseif ($status === 'Draft') {
+                    $badge = 'bg-secondary text-white';
+                } elseif ($status === 'Ditolak') {
+                    $badge = 'bg-danger text-white';
+                }
+                return '<span class="badge ' . $badge . ' px-2 py-1">' . e($status) . '</span>';
+            })
             ->addColumn('action', function (PrestasiBelmawa $model) {
                 return '
                 <div class="btn-group" role="group">
@@ -76,7 +88,13 @@ class PrestasiBelmawaDataTable extends DataTable
         $query = $model->newQuery();
         $user = auth()->user();
         if ($user && $user->role === 'mahasiswa') {
-            $query->where('nama_mahasiswa', 'LIKE', '%' . $user->name . '%');
+            $name = trim($user->name);
+            $query->where(function ($q) use ($name) {
+                $q->where('nama_mahasiswa', 'LIKE', '%' . $name . '%')
+                  ->orWhere('nama_mahasiswa', 'LIKE', '%' . strtolower($name) . '%')
+                  ->orWhere('nama_mahasiswa', 'LIKE', '%' . strtoupper($name) . '%')
+                  ->orWhere('nama_mahasiswa', 'LIKE', '%' . ucwords(strtolower($name)) . '%');
+            });
         }
         return $query->latest();
     }

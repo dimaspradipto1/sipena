@@ -161,7 +161,8 @@
 
                 <div id="container-mahasiswa">
                     @php
-                        $mahasiswaList = old('data_mahasiswa', [['nim' => '', 'nama' => '']]);
+                        $defaultNama = (auth()->check() && auth()->user()->role === 'mahasiswa') ? auth()->user()->name : '';
+                        $mahasiswaList = old('data_mahasiswa', [['nim' => '', 'nama' => $defaultNama]]);
                     @endphp
 
                     @foreach($mahasiswaList as $index => $mhs)

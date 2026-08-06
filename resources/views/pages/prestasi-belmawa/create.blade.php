@@ -83,7 +83,7 @@
 
                             <div class="col-md-6">
                                 <label for="nama_mahasiswa" class="form-label fw-medium">Nama Mahasiswa / Tim Peserta</label>
-                                <input type="text" class="form-control" id="nama_mahasiswa" name="nama_mahasiswa" value="{{ old('nama_mahasiswa') }}" placeholder="Nama Mahasiswa atau Ketua & Tim">
+                                <input type="text" class="form-control" id="nama_mahasiswa" name="nama_mahasiswa" value="{{ old('nama_mahasiswa', (auth()->check() && auth()->user()->role === 'mahasiswa') ? auth()->user()->name : '') }}" placeholder="Nama Mahasiswa atau Ketua & Tim">
                             </div>
 
                             <div class="col-md-3">

@@ -16,71 +16,58 @@
 
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-bell"></i>
-            <span class="badge bg-primary badge-number">4</span>
+            @if(isset($headerUnreadCount) && $headerUnreadCount > 0)
+              <span class="badge bg-primary badge-number">{{ $headerUnreadCount }}</span>
+            @endif
           </a><!-- End Notification Icon -->
 
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications" style="max-width: 340px; min-width: 300px;">
             <li class="dropdown-header">
-              You have 4 new notifications
-              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="notification-item">
-              <i class="bi bi-exclamation-circle text-warning"></i>
-              <div>
-                <h4>Lorem Ipsum</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>30 min. ago</p>
-              </div>
+              @if(isset($headerUnreadCount) && $headerUnreadCount > 0)
+                Ada {{ $headerUnreadCount }} aktivitas pengajuan terbaru
+              @else
+                Tidak ada pemberitahuan baru
+              @endif
             </li>
 
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="notification-item">
-              <i class="bi bi-x-circle text-danger"></i>
-              <div>
-                <h4>Atque rerum nesciunt</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>1 hr. ago</p>
-              </div>
-            </li>
-
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="notification-item">
-              <i class="bi bi-check-circle text-success"></i>
-              <div>
-                <h4>Sit rerum fuga</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>2 hrs. ago</p>
-              </div>
-            </li>
-
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="notification-item">
-              <i class="bi bi-info-circle text-primary"></i>
-              <div>
-                <h4>Dicta reprehenderit</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>4 hrs. ago</p>
-              </div>
-            </li>
+            @if(isset($headerNotifications) && count($headerNotifications) > 0)
+              @foreach($headerNotifications as $notif)
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li class="notification-item py-2 px-3">
+                  <a href="{{ $notif['url'] }}" class="d-flex text-decoration-none text-dark">
+                    @if(in_array($notif['status'], ['Terverifikasi', 'Verified']))
+                      <i class="bi bi-check-circle text-success fs-5 me-2 flex-shrink-0 mt-1"></i>
+                    @elseif(in_array($notif['status'], ['Ditolak', 'Rejected']))
+                      <i class="bi bi-x-circle text-danger fs-5 me-2 flex-shrink-0 mt-1"></i>
+                    @elseif(in_array($notif['status'], ['Submitted', 'Verifikasi', 'Draft']))
+                      <i class="bi bi-exclamation-circle text-warning fs-5 me-2 flex-shrink-0 mt-1"></i>
+                    @else
+                      <i class="bi bi-info-circle text-primary fs-5 me-2 flex-shrink-0 mt-1"></i>
+                    @endif
+                    <div class="overflow-hidden">
+                      <h4 class="fs-6 fw-bold mb-1 text-truncate" style="font-size: 0.85rem !important;">{{ $notif['title'] }}</h4>
+                      <p class="mb-1 text-muted small text-truncate" style="font-size: 0.78rem;">{{ $notif['sub'] }}</p>
+                      <p class="mb-0 text-secondary" style="font-size: 0.72rem;"><i class="bi bi-clock me-1"></i>{{ $notif['time'] }}</p>
+                    </div>
+                  </a>
+                </li>
+              @endforeach
+            @else
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li class="p-3 text-center text-muted small">
+                Belum ada aktivitas pengajuan terbaru.
+              </li>
+            @endif
 
             <li>
               <hr class="dropdown-divider">
             </li>
             <li class="dropdown-footer">
-              <a href="#">Show all notifications</a>
+              <a href="{{ route('prestasi-mandiri.index') }}">Lihat Semua Pengajuan</a>
             </li>
 
           </ul><!-- End Notification Dropdown Items -->

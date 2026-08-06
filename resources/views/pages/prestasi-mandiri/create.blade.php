@@ -207,9 +207,10 @@
 
                 <div id="container-mahasiswa">
                     @php
-                        $mahasiswaList = old('data_mahasiswa', $prestasiMandiri->data_mahasiswa ?? [['nim' => '', 'nama' => '']]);
+                        $defaultNama = (auth()->check() && auth()->user()->role === 'mahasiswa') ? auth()->user()->name : '';
+                        $mahasiswaList = old('data_mahasiswa', $prestasiMandiri->data_mahasiswa ?? [['nim' => '', 'nama' => $defaultNama]]);
                         if (empty($mahasiswaList)) {
-                            $mahasiswaList = [['nim' => '', 'nama' => '']];
+                            $mahasiswaList = [['nim' => '', 'nama' => $defaultNama]];
                         }
                     @endphp
 

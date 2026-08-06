@@ -52,11 +52,13 @@ class KejuaraanDataTable extends DataTable
                 return '<div class="fw-medium text-dark">' . e($model->nama_pt) . '</div><small class="text-muted">' . e($model->kode_pt) . '</small>';
             })
             ->editColumn('status', function (Kejuaraan $model) {
-                $badge = 'bg-success';
+                $badge = 'bg-success text-white';
                 if ($model->status === 'Draft') {
-                    $badge = 'bg-secondary';
+                    $badge = 'bg-secondary text-white';
                 } elseif ($model->status === 'Submitted') {
-                    $badge = 'bg-primary';
+                    $badge = 'bg-warning text-dark';
+                } elseif ($model->status === 'Ditolak') {
+                    $badge = 'bg-danger text-white';
                 }
                 return '<span class="badge ' . $badge . ' px-2 py-1">' . e($model->status) . '</span>';
             })

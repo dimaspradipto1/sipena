@@ -39,7 +39,16 @@ class SertifikasiDataTable extends DataTable
                 return '<span class="small text-secondary">' . e($item->pt ?? 'Universitas Ibnu Sina') . '</span>';
             })
             ->editColumn('status', function ($item) {
-                return '<span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">' . e($item->status ?? 'Terverifikasi') . '</span>';
+                $status = $item->status ?? 'Terverifikasi';
+                $badgeClass = 'bg-success text-white';
+                if ($status === 'Submitted') {
+                    $badgeClass = 'bg-warning text-dark';
+                } elseif ($status === 'Draft') {
+                    $badgeClass = 'bg-secondary text-white';
+                } elseif ($status === 'Ditolak') {
+                    $badgeClass = 'bg-danger text-white';
+                }
+                return '<span class="badge ' . $badgeClass . ' px-2 py-1">' . e($status) . '</span>';
             })
             ->addColumn('action', function ($item) {
                 $editUrl = route('sertifikasi.edit', $item->id);
@@ -73,7 +82,13 @@ class SertifikasiDataTable extends DataTable
         $query = $model->newQuery();
         $user = auth()->user();
         if ($user && $user->role === 'mahasiswa') {
-            $query->where('data_mahasiswa', 'LIKE', '%' . $user->name . '%');
+            $name = trim($user->name);
+            $query->where(function ($q) use ($name) {
+                $q->where('data_mahasiswa', 'LIKE', '%' . $name . '%')
+                  ->orWhere('data_mahasiswa', 'LIKE', '%' . strtolower($name) . '%')
+                  ->orWhere('data_mahasiswa', 'LIKE', '%' . strtoupper($name) . '%')
+                  ->orWhere('data_mahasiswa', 'LIKE', '%' . ucwords(strtolower($name)) . '%');
+            });
         }
         return $query->latest();
     }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DosenController;
 use App\Http\Controllers\InstitusiController;
 use App\Http\Controllers\KejuaraanController;
 use App\Http\Controllers\PrestasiBelmawaController;
@@ -38,6 +39,11 @@ Route::middleware(['auth', 'checkrole'])->group(function () {
 
     // User Management Resource Routes
     Route::resource('users', UserController::class);
+
+    // Dosen Resource & Import Routes
+    Route::get('dosen/template/download', [DosenController::class, 'downloadTemplate'])->name('dosen.template');
+    Route::post('dosen/import', [DosenController::class, 'import'])->name('dosen.import');
+    Route::resource('dosen', DosenController::class);
 
     // Prestasi Belmawa Resource Routes
     Route::resource('prestasi-belmawa', PrestasiBelmawaController::class);

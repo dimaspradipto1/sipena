@@ -113,13 +113,33 @@ class PrestasiMandiriController extends Controller
             return !empty($item['nidn']) || !empty($item['nama']);
         }));
 
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa') {
+            $hasCurrentStudent = false;
+            foreach ($mahasiswa as $mhs) {
+                if (!empty($mhs['nama']) && strcasecmp(trim($mhs['nama']), trim($user->name)) === 0) {
+                    $hasCurrentStudent = true;
+                    break;
+                }
+            }
+            if (!$hasCurrentStudent) {
+                $mahasiswa[] = [
+                    'nama'  => $user->name,
+                    'nim'   => $request->input('nim', ''),
+                    'prodi' => 'Teknik Informatika'
+                ];
+            }
+        }
+
         $validated['data_mahasiswa'] = $mahasiswa;
         $validated['data_dosen'] = $dosen;
         $validated['tahun'] = !empty($validated['tanggal_sertifikat']) 
             ? Carbon::parse($validated['tanggal_sertifikat'])->year 
             : date('Y');
         $validated['pt'] = 'Universitas Ibnu Sina';
-        $validated['status'] = 'Terverifikasi';
+        $validated['status'] = (auth()->check() && in_array(auth()->user()->role, ['superadmin', 'adminbkak']))
+            ? ($request->input('status', 'Terverifikasi'))
+            : 'Submitted';
 
         PrestasiMandiri::create($validated);
 

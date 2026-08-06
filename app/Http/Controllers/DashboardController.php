@@ -19,16 +19,19 @@ class DashboardController extends Controller
         $selectedProdi = $request->query('prodi', 'all');
         $selectedJenis = $request->query('jenis', 'all');
 
-        // Master List of Prodi at Universitas Ibnu Sina
+        // Master List of Official Prodi at Universitas Ibnu Sina
         $defaultProdis = [
-            'Teknik Informatika',
-            'Sistem Informasi',
-            'Teknik Industri',
-            'Manajemen',
-            'Akuntansi',
-            'Kesehatan Masyarakat',
-            'Farmasi',
-            'Teknik Sipil',
+            'S2-MAGISTER MANAJEMEN',
+            'S2-KESEHATAN MASYARAKAT',
+            'S1-AKUNTANSI',
+            'S1-MANAJEMEN',
+            'S1-TEKNIK INDUSTRI',
+            'S1-TEKNIK INFORMATIKA',
+            'S1-TEKNIK LOGISTIK',
+            'S1-SISTEM INFORMASI',
+            'S1-TEKNIK PERKAPALAN',
+            'S1-KESEHATAN DAN KESELAMATAN KERJA',
+            'S1-KESEHATAN LINGKUNGAN',
         ];
 
         // Retrieve all records for memory-efficient mapping & filtering

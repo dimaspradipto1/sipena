@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             SertifikasiSeeder::class,
             InstitusiSeeder::class,
             KejuaraanSeeder::class,
+            DosenSeeder::class,
         ]);
     }
 }
