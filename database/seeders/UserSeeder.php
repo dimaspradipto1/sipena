@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'name'      => 'System Administrator',
-                'email'     => 'admin.system@uis.ac.id',
+                'email'     => 'admin@uis.ac.id',
                 'password'  => Hash::make('password'),
                 'role'      => 'superadmin',
                 'is_active' => true,
