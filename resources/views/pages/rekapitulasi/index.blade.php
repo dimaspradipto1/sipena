@@ -21,18 +21,18 @@
             </h6>
             <div class="d-flex gap-2 flex-wrap">
                 <!-- Export Excel Button -->
-                <a href="{{ route('rekapitulasi.excel', request()->query()) }}" target="_blank" class="btn btn-success fw-semibold btn-sm shadow-sm">
+                <a href="{{ route('rekapitulasi.excel', request()->query()) }}" id="btnExportExcel" target="_blank" class="btn btn-success fw-semibold btn-sm shadow-sm">
                     <i class="bi bi-file-earmark-excel me-1"></i> Export Excel (.xls)
                 </a>
 
                 <!-- Printable PDF Button -->
-                <a href="{{ route('rekapitulasi.pdf', request()->query()) }}" target="_blank" class="btn btn-danger fw-semibold btn-sm shadow-sm">
+                <a href="{{ route('rekapitulasi.pdf', request()->query()) }}" id="btnExportPdf" target="_blank" class="btn btn-danger fw-semibold btn-sm shadow-sm">
                     <i class="bi bi-file-earmark-pdf me-1"></i> Cetak Laporan PDF
                 </a>
             </div>
         </div>
         <div class="card-body p-4 pt-1">
-            <form action="{{ route('rekapitulasi.index') }}" method="GET" class="row g-3 align-items-end">
+            <form id="filterForm" action="{{ route('rekapitulasi.index') }}" method="GET" class="row g-3 align-items-end">
                 <!-- Filter Tahun -->
                 <div class="col-md-3 col-sm-6">
                     <label class="form-label text-muted small fw-semibold mb-1">
@@ -77,7 +77,7 @@
                         <i class="bi bi-journal-text me-1 text-primary"></i> Sumber Data
                     </label>
                     <select name="modul" class="form-select border-primary-subtle shadow-sm" style="font-size: 0.88rem;">
-                        <option value="all" {{ $selectedModul === 'all' ? 'selected' : '' }}>-- Semual Modul --</option>
+                        <option value="all" {{ $selectedModul === 'all' ? 'selected' : '' }}>-- Semua Modul --</option>
                         <option value="mandiri" {{ $selectedModul === 'mandiri' ? 'selected' : '' }}>Prestasi Mandiri</option>
                         <option value="belmawa" {{ $selectedModul === 'belmawa' ? 'selected' : '' }}>Prestasi Belmawa</option>
                         <option value="rekognisi" {{ $selectedModul === 'rekognisi' ? 'selected' : '' }}>Rekognisi</option>
@@ -243,6 +243,20 @@ $(document).ready(function() {
             }
         }
     });
+
+    // Dynamic sync of Export buttons with filter dropdowns
+    function updateExportLinks() {
+        const form = document.getElementById('filterForm');
+        if (!form) return;
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData).toString();
+        const excelBase = "{{ route('rekapitulasi.excel') }}";
+        const pdfBase = "{{ route('rekapitulasi.pdf') }}";
+        $('#btnExportExcel').attr('href', excelBase + '?' + params);
+        $('#btnExportPdf').attr('href', pdfBase + '?' + params);
+    }
+
+    $('#filterForm select').on('change', updateExportLinks);
 });
 </script>
 @endpush

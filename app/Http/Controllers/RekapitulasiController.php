@@ -72,10 +72,10 @@ class RekapitulasiController extends Controller
      */
     private function getConsolidatedData(Request $request): array
     {
-        $selectedTahun = $request->query('tahun', date('Y'));
-        $selectedProdi = $request->query('prodi', 'all');
-        $selectedJenis = $request->query('jenis', 'all');
-        $selectedModul = $request->query('modul', 'all');
+        $selectedTahun = $request->filled('tahun') ? $request->query('tahun') : 'all';
+        $selectedProdi = $request->filled('prodi') ? $request->query('prodi') : 'all';
+        $selectedJenis = $request->filled('jenis') ? $request->query('jenis') : 'all';
+        $selectedModul = $request->filled('modul') ? $request->query('modul') : 'all';
 
         $allBelmawa    = PrestasiBelmawa::all();
         $allMandiri    = PrestasiMandiri::all();

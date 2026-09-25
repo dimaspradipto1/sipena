@@ -72,6 +72,44 @@ class NewFeaturesTest extends TestCase
         $admin->delete();
     }
 
+    public function test_rekapitulasi_without_filter_shows_all_data_and_filtered_when_filter_applied(): void
+    {
+        $admin = User::firstOrCreate(
+            ['email' => 'admin_rekap_test@uis.ac.id'],
+            [
+                'name'      => 'Admin Rekap Filter Test',
+                'password'  => bcrypt('password'),
+                'role'      => 'superadmin',
+                'is_active' => true,
+            ]
+        );
+
+        $this->actingAs($admin);
+
+        // 1. Without query params (no filter selected):
+        // Web index, PDF, and Excel should have selectedTahun = 'all' and return all data
+        $indexResponse = $this->get(route('rekapitulasi.index'));
+        $indexResponse->assertStatus(200);
+        $indexResponse->assertViewHas('selectedTahun', 'all');
+        $indexResponse->assertViewHas('selectedProdi', 'all');
+
+        $pdfResponseNoFilter = $this->get(route('rekapitulasi.pdf'));
+        $pdfResponseNoFilter->assertStatus(200);
+        $pdfResponseNoFilter->assertSee('Semua Tahun');
+
+        $excelResponseNoFilter = $this->get(route('rekapitulasi.excel'));
+        $excelResponseNoFilter->assertStatus(200);
+        $excelResponseNoFilter->assertSee('Semua Tahun');
+
+        // 2. With filter applied (e.g. specific prodi and year):
+        $filteredPdf = $this->get(route('rekapitulasi.pdf', ['tahun' => 2026, 'prodi' => 'S1 - Teknik Informatika']));
+        $filteredPdf->assertStatus(200);
+        $filteredPdf->assertSee('Tahun 2026');
+        $filteredPdf->assertSee('S1 - Teknik Informatika');
+
+        $admin->delete();
+    }
+
     public function test_standardized_prodi_names_are_available(): void
     {
         $officialProdis = \App\Http\Controllers\RekapitulasiController::getOfficialProdiList();
