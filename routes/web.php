@@ -10,6 +10,7 @@ use App\Http\Controllers\PrestasiMandiriController;
 use App\Http\Controllers\RekapitulasiController;
 use App\Http\Controllers\RekognisiController;
 use App\Http\Controllers\SertifikasiController;
+use App\Http\Controllers\TemplateLpjController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,7 +18,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(AuthController::class)->group(function () {
     Route::get('/', 'login')->name('login')->middleware('guest');
+    Route::get('/login', 'login')->middleware('guest');
     Route::post('/login', 'authenticate')->name('login.post')->middleware('guest');
+    Route::get('/register', 'register')->name('register')->middleware('guest');
+    Route::post('/register', 'storeRegister')->name('register.post')->middleware('guest');
     Route::post('/logout', 'logout')->name('logout')->middleware('auth');
 });
 
@@ -49,6 +53,8 @@ Route::middleware(['auth', 'checkrole'])->group(function () {
     Route::resource('prestasi-belmawa', PrestasiBelmawaController::class);
 
     // Prestasi Mandiri Resource Routes
+    Route::get('prestasi-mandiri/template-lpj/download', [PrestasiMandiriController::class, 'downloadTemplateLpj'])->name('prestasi-mandiri.template-lpj');
+    Route::get('prestasi-mandiri/{prestasi_mandiri}/download-lpj', [PrestasiMandiriController::class, 'downloadUploadedLpj'])->name('prestasi-mandiri.download-lpj');
     Route::resource('prestasi-mandiri', PrestasiMandiriController::class);
 
     // Rekognisi Resource Routes
@@ -62,4 +68,8 @@ Route::middleware(['auth', 'checkrole'])->group(function () {
 
     // Institusi Resource Routes
     Route::resource('institusi', InstitusiController::class);
+
+    // Template LPJ Resource Routes
+    Route::get('template-lpj/{template_lpj}/download', [TemplateLpjController::class, 'download'])->name('template-lpj.download');
+    Route::resource('template-lpj', TemplateLpjController::class);
 });

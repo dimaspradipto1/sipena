@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -14,6 +16,45 @@ class AuthController extends Controller
             return redirect()->route('dashboard.index');
         }
         return view('layouts.auth.login');
+    }
+
+    public function register()
+    {
+        if (Auth::check()) {
+            return redirect()->route('dashboard.index');
+        }
+        return view('layouts.auth.register');
+    }
+
+    public function storeRegister(Request $request)
+    {
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+        ], [
+            'name.required'      => 'Nama lengkap wajib diisi.',
+            'email.required'     => 'Alamat email wajib diisi.',
+            'email.email'        => 'Format alamat email tidak valid.',
+            'email.unique'       => 'Email ini telah terdaftar, silakan gunakan email lain atau login.',
+            'password.required'  => 'Password wajib diisi.',
+            'password.min'       => 'Password minimal terdiri dari 6 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        $user = User::create([
+            'name'      => trim($request->name),
+            'email'     => strtolower(trim($request->email)),
+            'password'  => Hash::make($request->password),
+            'role'      => 'mahasiswa', // Default Role Mahasiswa
+            'is_active' => true,
+        ]);
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect()->route('dashboard.index')
+            ->with('success', 'Pendaftaran berhasil! Selamat datang di SIPENA UIS, ' . $user->name . '.');
     }
 
     public function authenticate(AuthRequest $request)

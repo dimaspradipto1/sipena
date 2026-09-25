@@ -47,20 +47,20 @@ class UserDataTable extends DataTable
                 $csrf = csrf_field();
                 $method = method_field('DELETE');
 
-                $btnEdit = '<a href="' . $editUrl . '" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-pencil-square"></i> Edit</a>';
+                $btnEdit = '<a href="' . $editUrl . '" class="btn-action btn-action-edit" title="Edit Pengguna"><i class="bi bi-pencil-square"></i></a>';
                 
                 if (Auth::id() === $user->id) {
-                    $btnDelete = '<button class="btn btn-sm btn-outline-secondary" disabled><i class="bi bi-trash"></i> Hapus</button>';
+                    $btnDelete = '<button type="button" class="btn-action disabled" title="Tidak dapat menghapus akun sendiri" disabled><i class="bi bi-trash"></i></button>';
                 } else {
                     $btnDelete = '
-                        <form action="' . $deleteUrl . '" method="POST" class="d-inline delete-form">
+                        <form action="' . $deleteUrl . '" method="POST" class="d-inline m-0 p-0 delete-form">
                             ' . $csrf . '
                             ' . $method . '
-                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete" data-id="' . $user->id . '"><i class="bi bi-trash"></i> Hapus</button>
+                            <button type="button" class="btn-action btn-action-delete btn-delete" data-id="' . $user->id . '" title="Hapus Pengguna"><i class="bi bi-trash"></i></button>
                         </form>';
                 }
 
-                return '<div class="btn-group" role="group">' . $btnEdit . $btnDelete . '</div>';
+                return '<div class="action-btn-group" role="group">' . $btnEdit . $btnDelete . '</div>';
             })
             ->rawColumns(['role', 'is_active', 'action'])
             ->setRowId('id');

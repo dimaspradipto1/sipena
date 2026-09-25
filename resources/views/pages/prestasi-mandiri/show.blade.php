@@ -140,6 +140,33 @@
                     </div>
                 </div>
 
+                <!-- Link Dokumen LPJ & File Dokumen LPJ -->
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-dark mb-1">Link Dokumen LPJ</label>
+                    <div class="p-2 rounded bg-light border-0 text-dark small text-break">
+                        @if($prestasiMandiri->link_dokumen_lpj)
+                            <a href="{{ $prestasiMandiri->link_dokumen_lpj }}" target="_blank" class="text-primary text-decoration-none">
+                                <i class="bi bi-box-arrow-up-right me-1"></i> {{ $prestasiMandiri->link_dokumen_lpj }}
+                            </a>
+                        @else
+                            -
+                        @endif
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-dark mb-1">Berkas File LPJ</label>
+                    <div class="p-2 rounded bg-light border-0 text-dark small">
+                        @if($prestasiMandiri->file_dokumen_lpj)
+                            <a href="{{ route('prestasi-mandiri.download-lpj', $prestasiMandiri->id) }}" class="btn btn-sm btn-outline-success py-1 px-3 d-inline-flex align-items-center" target="_blank">
+                                <i class="bi bi-download me-1"></i> Unduh Berkas LPJ
+                            </a>
+                        @else
+                            <span class="text-muted">-</span>
+                        @endif
+                    </div>
+                </div>
+
                 <!-- Keterangan -->
                 <div class="col-12">
                     <label class="form-label small fw-bold text-dark mb-1">Keterangan</label>

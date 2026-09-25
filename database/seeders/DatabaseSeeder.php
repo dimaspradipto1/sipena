@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             InstitusiSeeder::class,
             KejuaraanSeeder::class,
             DosenSeeder::class,
+            TemplateLpjSeeder::class,
         ]);
     }
 }

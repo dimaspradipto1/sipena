@@ -90,31 +90,54 @@
             });
         });
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
         $(document).on('click', '.btn-delete', function(e) {
             e.preventDefault();
             let id = $(this).data('id');
             let name = $(this).data('name');
             let url = "{{ route('kejuaraan.destroy', ':id') }}".replace(':id', id);
 
-            if (confirm('Apakah Anda yakin ingin menghapus data kejuaraan "' + name + '"?')) {
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: {
-                        _method: 'DELETE',
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            alert(response.message);
-                            $('#kejuaraan-table').DataTable().ajax.reload();
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: 'Hapus data kejuaraan "' + name + '"?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: {
+                            _method: 'DELETE',
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: response.message,
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                $('#kejuaraan-table').DataTable().ajax.reload();
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: 'Terjadi kesalahan saat menghapus data.'
+                            });
                         }
-                    },
-                    error: function(xhr) {
-                        alert('Terjadi kesalahan saat menghapus data.');
-                    }
-                });
-            }
+                    });
+                }
+            });
         });
     </script>
 @endpush

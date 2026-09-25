@@ -20,14 +20,18 @@ class PrestasiBelmawaController extends Controller
                 'Internasional' => 'Internasional',
             ],
             'prestasis' => [
-                'Juara 1 (Medali Emas)'   => 'Juara 1 (Medali Emas)',
-                'Juara 2 (Medali Perak)'  => 'Juara 2 (Medali Perak)',
-                'Juara 3 (Medali Perunggu)' => 'Juara 3 (Medali Perunggu)',
-                'Juara Harapan 1'         => 'Juara Harapan 1',
-                'Juara Harapan 2'         => 'Juara Harapan 2',
-                'Juara Harapan 3'         => 'Juara Harapan 3',
-                'Finalis'                 => 'Finalis',
-                'Peserta Terpilih'        => 'Peserta Terpilih',
+                'Juara 1 (Medali Emas)'                          => 'Juara 1 (Medali Emas)',
+                'Juara 2 (Medali Perak)'                         => 'Juara 2 (Medali Perak)',
+                'Juara 3 (Medali Perunggu)'                      => 'Juara 3 (Medali Perunggu)',
+                'Juara Harapan 1'                                => 'Juara Harapan 1',
+                'Juara Harapan 2'                                => 'Juara Harapan 2',
+                'Juara Harapan 3'                                => 'Juara Harapan 3',
+                'Juara Umum'                                     => 'Juara Umum',
+                'Apresiasi Kejuaraan'                            => 'Apresiasi Kejuaraan',
+                'Penghargaan'                                    => 'Penghargaan',
+                'Apresiasi Kejuaraan / Penghargaan / Juara Umum' => 'Apresiasi Kejuaraan / Penghargaan / Juara Umum',
+                'Finalis'                                        => 'Finalis',
+                'Peserta Terpilih'                               => 'Peserta Terpilih',
             ],
             'statuses' => [
                 'Terverifikasi' => 'Terverifikasi',
@@ -102,10 +106,25 @@ class PrestasiBelmawaController extends Controller
     }
 
     /**
+     * Authorize student access
+     */
+    private function authorizeStudentAccess(PrestasiBelmawa $prestasiBelmawa): void
+    {
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa') {
+            $studentName = strtolower(trim($user->name));
+            if (!str_contains(strtolower($prestasiBelmawa->nama_mahasiswa ?? ''), $studentName)) {
+                abort(403, 'Akses tidak diizinkan. Anda hanya dapat melihat dan mengelola data prestasi Belmawa Anda sendiri.');
+            }
+        }
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(PrestasiBelmawa $prestasiBelmawa)
     {
+        $this->authorizeStudentAccess($prestasiBelmawa);
         return view('pages.prestasi-belmawa.show', compact('prestasiBelmawa'));
     }
 
@@ -114,6 +133,7 @@ class PrestasiBelmawaController extends Controller
      */
     public function edit(PrestasiBelmawa $prestasiBelmawa)
     {
+        $this->authorizeStudentAccess($prestasiBelmawa);
         $options = $this->getFormOptions();
         return view('pages.prestasi-belmawa.edit', compact('options', 'prestasiBelmawa'));
     }
@@ -123,6 +143,8 @@ class PrestasiBelmawaController extends Controller
      */
     public function update(Request $request, PrestasiBelmawa $prestasiBelmawa)
     {
+        $this->authorizeStudentAccess($prestasiBelmawa);
+
         $validated = $request->validate([
             'nama_lomba'          => ['required', 'string', 'max:255'],
             'kategori_lomba'      => ['nullable', 'string', 'max:255'],
@@ -147,6 +169,11 @@ class PrestasiBelmawaController extends Controller
             'nama_pt.required'          => 'Nama Perguruan Tinggi wajib diisi.',
         ]);
 
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa') {
+            $validated['nama_mahasiswa'] = $user->name;
+        }
+
         $prestasiBelmawa->update($validated);
 
         return redirect()->route('prestasi-belmawa.index')
@@ -158,6 +185,8 @@ class PrestasiBelmawaController extends Controller
      */
     public function destroy(Request $request, PrestasiBelmawa $prestasiBelmawa)
     {
+        $this->authorizeStudentAccess($prestasiBelmawa);
+
         $prestasiBelmawa->delete();
 
         if ($request->ajax()) {

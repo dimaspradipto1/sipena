@@ -6,8 +6,8 @@
     <title>Laporan Rekapitulasi Prestasi Mahasiswa - Universitas Ibnu Sina</title>
     <style>
         @page {
-            size: A4 portrait;
-            margin: 15mm;
+            size: A4 landscape;
+            margin: 10mm;
         }
 
         body {
@@ -297,13 +297,16 @@
     <table class="table-custom">
         <thead>
             <tr>
-                <th style="width: 4%;">NO</th>
-                <th style="width: 18%;">MAHASISWA & NIM</th>
-                <th style="width: 18%;">PROGRAM STUDI</th>
-                <th style="width: 28%;">JUDUL KEGIATAN / PRESTASI</th>
-                <th style="width: 10%;">TINGKAT</th>
-                <th style="width: 14%;">CAPAIAN</th>
-                <th style="width: 8%;">TAHUN</th>
+                <th style="width: 3%; text-align: center;">NO</th>
+                <th style="width: 16%;">MAHASISWA & NIM</th>
+                <th style="width: 14%;">PROGRAM STUDI</th>
+                <th style="width: 18%;">JUDUL KEGIATAN</th>
+                <th style="width: 11%;">KATEGORI</th>
+                <th style="width: 9%; text-align: center;">KEPESERTAAN</th>
+                <th style="width: 8%; text-align: center;">TINGKAT</th>
+                <th style="width: 8%; text-align: center;">CAPAIAN</th>
+                <th style="width: 8%; text-align: center;">TGL SERTIFIKAT</th>
+                <th style="width: 5%; text-align: center;">TAHUN</th>
             </tr>
         </thead>
         <tbody>
@@ -317,15 +320,20 @@
                     <td>{{ $r['prodi'] }}</td>
                     <td>
                         <strong>{{ $r['judul_kegiatan'] }}</strong><br>
-                        <small style="color: #555;">Kategori: {{ $r['kategori'] }} ({{ $r['jenis'] }})</small>
+                        <small style="color: #666;">Modul: {{ $r['modul'] }}</small>
+                    </td>
+                    <td>{{ $r['kategori'] }}</td>
+                    <td style="text-align: center;">
+                        <span style="font-weight: 500;">{{ $r['kepesertaan'] }}</span>
                     </td>
                     <td style="text-align: center;">{{ $r['level'] }}</td>
                     <td style="text-align: center;"><strong>{{ $r['capaian'] }}</strong></td>
+                    <td style="text-align: center;">{{ $r['tanggal_sertifikat'] }}</td>
                     <td style="text-align: center;">{{ $r['tahun'] }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" style="text-align: center; font-style: italic; color: #666; padding: 15px;">
+                    <td colspan="10" style="text-align: center; font-style: italic; color: #666; padding: 15px;">
                         Tidak ada data rekapitulasi yang tersedia sesuai filter.
                     </td>
                 </tr>

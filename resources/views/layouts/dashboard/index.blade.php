@@ -312,22 +312,28 @@
                         <table class="table table-hover align-middle m-0" style="font-size: 0.85rem;">
                             <thead class="bg-light text-secondary">
                                 <tr>
-                                    <th class="ps-3">Judul Prestasi</th>
-                                    <th>Capaian</th>
+                                    <th class="ps-3">Nama Kompetisi</th>
+                                    <th>Peringkat</th>
                                     <th>Mahasiswa</th>
                                     <th class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($latestMandiri as $item)
+                                    @php
+                                        $mhsName = '-';
+                                        if (!empty($item->data_mahasiswa) && is_array($item->data_mahasiswa)) {
+                                            $mhsName = $item->data_mahasiswa[0]['nama'] ?? '-';
+                                        }
+                                    @endphp
                                     <tr>
                                         <td class="ps-3">
-                                            <div class="fw-bold text-dark">{{ $item->judul_prestasi }}</div>
-                                            <small class="text-muted">{{ $item->nama_kegiatan }}</small>
+                                            <div class="fw-bold text-dark">{{ $item->nama_kompetisi }}</div>
+                                            <small class="text-muted">{{ $item->nama_cabang }} &bull; {{ $item->level }}</small>
                                         </td>
-                                        <td><span class="badge bg-warning text-dark">{{ $item->capaian_prestasi }}</span></td>
-                                        <td><small class="text-dark fw-medium">{{ $item->nama_mahasiswa ?? '-' }}</small></td>
-                                        <td class="text-center"><span class="badge bg-success px-2 py-1">{{ $item->status_verifikasi }}</span></td>
+                                        <td><span class="badge bg-warning text-dark">{{ $item->peringkat }}</span></td>
+                                        <td><small class="text-dark fw-medium">{{ $mhsName }}</small></td>
+                                        <td class="text-center"><span class="badge bg-success px-2 py-1">{{ $item->status ?? 'Terverifikasi' }}</span></td>
                                     </tr>
                                 @empty
                                     <tr>

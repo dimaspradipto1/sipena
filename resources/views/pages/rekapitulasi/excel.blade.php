@@ -16,30 +16,30 @@
 <body>
     <table>
         <tr>
-            <td colspan="7" class="title">UNIVERSITAS IBNU SINA BATAM</td>
+            <td colspan="10" class="title">UNIVERSITAS IBNU SINA BATAM</td>
         </tr>
         <tr>
-            <td colspan="7" class="subtitle">LAPORAN REKAPITULASI PRESTASI MAHASISWA (SIMKATMAWA / BKAK)</td>
+            <td colspan="10" class="subtitle">LAPORAN REKAPITULASI PRESTASI MAHASISWA (SIMKATMAWA / BKAK)</td>
         </tr>
         <tr>
             <td class="meta-label">Periode Tahun</td>
             <td>: {{ $selectedTahun === 'all' ? 'Semua Tahun' : 'Tahun ' . $selectedTahun }}</td>
-            <td colspan="2"></td>
+            <td colspan="3"></td>
             <td class="meta-label">Kategori</td>
-            <td colspan="2">: {{ $selectedJenis === 'all' ? 'Semua Kategori' : $selectedJenis }}</td>
+            <td colspan="4">: {{ $selectedJenis === 'all' ? 'Semua Kategori' : $selectedJenis }}</td>
         </tr>
         <tr>
             <td class="meta-label">Program Studi</td>
             <td>: {{ $selectedProdi === 'all' ? 'Semua Program Studi' : $selectedProdi }}</td>
-            <td colspan="2"></td>
+            <td colspan="3"></td>
             <td class="meta-label">Tanggal Export</td>
-            <td colspan="2">: {{ date('d F Y H:i') }} WIB</td>
+            <td colspan="4">: {{ date('d F Y H:i') }} WIB</td>
         </tr>
-        <tr><td colspan="7"></td></tr>
+        <tr><td colspan="10"></td></tr>
 
         <!-- MATRIKS REKAPITULASI -->
         <tr>
-            <td colspan="7" style="font-weight: bold; font-size: 12pt; color: #1e3a8a;">I. MATRIKS REKAPITULASI PRESTASI PER PROGRAM STUDI</td>
+            <td colspan="10" style="font-weight: bold; font-size: 12pt; color: #1e3a8a;">I. MATRIKS REKAPITULASI PRESTASI PER PROGRAM STUDI</td>
         </tr>
         <tr>
             <td class="table-header" style="width: 50px;">NO</td>
@@ -86,16 +86,19 @@
 
         <!-- RINCIAN DATA -->
         <tr>
-            <td colspan="7" style="font-weight: bold; font-size: 12pt; color: #1e3a8a;">II. RINCIAN CAPAIAN PRESTASI MAHASISWA</td>
+            <td colspan="10" style="font-weight: bold; font-size: 12pt; color: #1e3a8a;">II. RINCIAN CAPAIAN PRESTASI MAHASISWA</td>
         </tr>
         <tr>
-            <td class="table-header-sub">NO</td>
-            <td class="table-header-sub">MAHASISWA (NIM)</td>
-            <td class="table-header-sub">PROGRAM STUDI</td>
-            <td class="table-header-sub">JUDUL KEGIATAN / PRESTASI</td>
-            <td class="table-header-sub">MODUL / KATEGORI</td>
-            <td class="table-header-sub">TINGKAT & CAPAIAN</td>
-            <td class="table-header-sub">TAHUN</td>
+            <td class="table-header-sub" style="width: 40px;">NO</td>
+            <td class="table-header-sub" style="width: 220px;">MAHASISWA (NIM)</td>
+            <td class="table-header-sub" style="width: 200px;">PROGRAM STUDI</td>
+            <td class="table-header-sub" style="width: 280px;">JUDUL KEGIATAN / PRESTASI</td>
+            <td class="table-header-sub" style="width: 160px;">KATEGORI</td>
+            <td class="table-header-sub" style="width: 120px;">KEPESERTAAN</td>
+            <td class="table-header-sub" style="width: 120px;">TINGKAT</td>
+            <td class="table-header-sub" style="width: 140px;">CAPAIAN</td>
+            <td class="table-header-sub" style="width: 140px;">TANGGAL SERTIFIKAT</td>
+            <td class="table-header-sub" style="width: 80px;">TAHUN</td>
         </tr>
         @forelse($filteredRecords as $i => $r)
             <tr>
@@ -103,13 +106,16 @@
                 <td class="cell-data">{{ $r['mahasiswa'] }} ({{ $r['nim'] }})</td>
                 <td class="cell-data">{{ $r['prodi'] }}</td>
                 <td class="cell-data">{{ $r['judul_kegiatan'] }}</td>
-                <td class="cell-data">{{ $r['modul'] }} - {{ $r['kategori'] }} ({{ $r['jenis'] }})</td>
-                <td class="cell-center">{{ $r['level'] }} - {{ $r['capaian'] }}</td>
+                <td class="cell-data">{{ $r['kategori'] }} ({{ $r['jenis'] }})</td>
+                <td class="cell-center">{{ $r['kepesertaan'] }}</td>
+                <td class="cell-center">{{ $r['level'] }}</td>
+                <td class="cell-center"><b>{{ $r['capaian'] }}</b></td>
+                <td class="cell-center">{{ $r['tanggal_sertifikat'] }}</td>
                 <td class="cell-center">{{ $r['tahun'] }}</td>
             </tr>
         @empty
             <tr>
-                <td colspan="7" class="cell-center" style="font-style: italic;">Tidak ada data rekapitulasi yang tersedia.</td>
+                <td colspan="10" class="cell-center" style="font-style: italic;">Tidak ada data rekapitulasi yang tersedia.</td>
             </tr>
         @endforelse
     </table>

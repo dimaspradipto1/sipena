@@ -124,8 +124,35 @@ class RekognisiController extends Controller
     /**
      * Display the specified resource.
      */
+    /**
+     * Authorize student access
+     */
+    private function authorizeStudentAccess(Rekognisi $rekognisi): void
+    {
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa') {
+            $studentName = strtolower(trim($user->name));
+            $isOwner = false;
+            if (!empty($rekognisi->data_mahasiswa) && is_array($rekognisi->data_mahasiswa)) {
+                foreach ($rekognisi->data_mahasiswa as $mhs) {
+                    if (!empty($mhs['nama']) && str_contains(strtolower($mhs['nama']), $studentName)) {
+                        $isOwner = true;
+                        break;
+                    }
+                }
+            }
+            if (!$isOwner) {
+                abort(403, 'Akses tidak diizinkan. Anda hanya dapat melihat dan mengelola data rekognisi Anda sendiri.');
+            }
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
     public function show(Rekognisi $rekognisi)
     {
+        $this->authorizeStudentAccess($rekognisi);
         return view('pages.rekognisi.show', compact('rekognisi'));
     }
 
@@ -134,6 +161,7 @@ class RekognisiController extends Controller
      */
     public function edit(Rekognisi $rekognisi)
     {
+        $this->authorizeStudentAccess($rekognisi);
         $options = $this->getFormOptions();
         return view('pages.rekognisi.edit', compact('options', 'rekognisi'));
     }
@@ -143,6 +171,8 @@ class RekognisiController extends Controller
      */
     public function update(Request $request, Rekognisi $rekognisi)
     {
+        $this->authorizeStudentAccess($rekognisi);
+
         $validated = $request->validate([
             'level'                   => ['required', 'string'],
             'nama_rekognisi'          => ['required', 'string', 'max:255'],
@@ -171,6 +201,24 @@ class RekognisiController extends Controller
             return !empty($item['nidn']) || !empty($item['nama']);
         }));
 
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa') {
+            $hasCurrentStudent = false;
+            foreach ($mahasiswa as $mhs) {
+                if (!empty($mhs['nama']) && str_contains(strtolower($mhs['nama']), strtolower(trim($user->name)))) {
+                    $hasCurrentStudent = true;
+                    break;
+                }
+            }
+            if (!$hasCurrentStudent) {
+                $mahasiswa[] = [
+                    'nama'  => $user->name,
+                    'nim'   => $request->input('nim', ''),
+                    'prodi' => 'S1 - Teknik Informatika'
+                ];
+            }
+        }
+
         $validated['data_mahasiswa'] = $mahasiswa;
         $validated['data_dosen'] = $dosen;
         if (!empty($validated['tanggal_sertifikat'])) {
@@ -188,6 +236,8 @@ class RekognisiController extends Controller
      */
     public function destroy(Request $request, Rekognisi $rekognisi)
     {
+        $this->authorizeStudentAccess($rekognisi);
+
         $rekognisi->delete();
 
         if ($request->ajax()) {

@@ -174,10 +174,11 @@
                             <th>Mahasiswa / NIM</th>
                             <th>Program Studi</th>
                             <th>Judul Kegiatan / Prestasi</th>
-                            <th>Modul</th>
+                            <th>Kategori</th>
+                            <th class="text-center">Kepesertaan</th>
                             <th class="text-center">Tingkat</th>
                             <th>Capaian / Peringkat</th>
-                            <th class="text-center">Kategori</th>
+                            <th class="text-center">Tgl Sertifikat</th>
                             <th class="text-center">Tahun</th>
                         </tr>
                     </thead>
@@ -192,12 +193,14 @@
                                 <td><span class="badge bg-light text-dark border">{{ $row['prodi'] }}</span></td>
                                 <td>
                                     <div class="fw-semibold text-dark">{{ $row['judul_kegiatan'] }}</div>
-                                    <small class="text-muted">{{ $row['kategori'] }}</small>
+                                    <small class="text-muted"><span class="badge bg-primary-subtle text-primary border border-primary-subtle py-0 px-1">{{ $row['modul'] }}</span></small>
                                 </td>
                                 <td>
-                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
-                                        {{ $row['modul'] }}
-                                    </span>
+                                    <div>{{ $row['kategori'] }}</div>
+                                    <small class="badge {{ $row['jenis'] === 'Akademik' ? 'bg-primary' : 'bg-success' }} px-1 py-0" style="font-size: 0.72rem;">{{ $row['jenis'] }}</small>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">{{ $row['kepesertaan'] }}</span>
                                 </td>
                                 <td class="text-center">
                                     <span class="badge bg-info text-white">{{ $row['level'] }}</span>
@@ -205,16 +208,12 @@
                                 <td>
                                     <span class="badge bg-warning text-dark fw-bold px-2 py-1">{{ $row['capaian'] }}</span>
                                 </td>
-                                <td class="text-center">
-                                    <span class="badge {{ $row['jenis'] === 'Akademik' ? 'bg-primary' : 'bg-success' }} px-2 py-1">
-                                        {{ $row['jenis'] }}
-                                    </span>
-                                </td>
+                                <td class="text-center text-muted fw-medium">{{ $row['tanggal_sertifikat'] }}</td>
                                 <td class="text-center fw-bold">{{ $row['tahun'] }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center text-muted py-4">
+                                <td colspan="10" class="text-center text-muted py-4">
                                     Tidak ada data rekapitulasi yang cocok dengan filter yang dipilih.
                                 </td>
                             </tr>

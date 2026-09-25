@@ -47,6 +47,7 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{ $dataTable->scripts() }}
 
     <script>
@@ -56,25 +57,46 @@
             let name = $(this).data('name');
             let url = "{{ route('prestasi-belmawa.destroy', ':id') }}".replace(':id', id);
 
-            if (confirm('Apakah Anda yakin ingin menghapus data "' + name + '"?')) {
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: {
-                        _method: 'DELETE',
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            alert(response.message);
-                            $('#prestasi-belmawa-table').DataTable().ajax.reload();
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: 'Hapus data prestasi belmawa "' + name + '"?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: {
+                            _method: 'DELETE',
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: response.message,
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                $('#prestasi-belmawa-table').DataTable().ajax.reload();
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: 'Terjadi kesalahan saat menghapus data.'
+                            });
                         }
-                    },
-                    error: function(xhr) {
-                        alert('Terjadi kesalahan saat menghapus data.');
-                    }
-                });
-            }
+                    });
+                }
+            });
         });
     </script>
 @endpush

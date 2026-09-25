@@ -7,25 +7,64 @@ use App\Models\PrestasiBelmawa;
 use App\Models\PrestasiMandiri;
 use App\Models\Rekognisi;
 use App\Models\Sertifikasi;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class RekapitulasiController extends Controller
 {
     /**
-     * Master List of Program Studi
+     * Master List of Official Program Studi at Universitas Ibnu Sina
      */
-    private function getProdiList(): array
+    public static function getOfficialProdiList(): array
     {
         return [
-            'Teknik Informatika',
-            'Sistem Informasi',
-            'Teknik Industri',
-            'Manajemen',
-            'Akuntansi',
-            'Kesehatan Masyarakat',
-            'Farmasi',
-            'Teknik Sipil',
+            'S1 - Teknik Informatika',
+            'S1 - Sistem Informasi',
+            'S1 - Teknik Industri',
+            'S1 - Teknik Logistik',
+            'S1 - Teknik Perkapalan',
+            'S1 - Manajemen',
+            'S1 - Akuntansi',
+            'S1 - Kesehatan Masyarakat',
+            'S1 - Kesehatan dan Keselamatan Kerja',
+            'S1 - Kesehatan Lingkungan',
+            'S2 - Magister Manajemen',
+            'S2 - Magister Kesehatan Masyarakat',
         ];
+    }
+
+    private function getProdiList(): array
+    {
+        return self::getOfficialProdiList();
+    }
+
+    /**
+     * Helper to normalize prodi name for robust matching
+     */
+    private function normalizeProdi(?string $prodi): string
+    {
+        if (!$prodi) return '';
+        $p = strtolower(trim($prodi));
+        // Remove prefixes like S1-, S2-, D3-, S1 -, S2 -
+        $p = preg_replace('/^(s1|s2|d3)[\s\-_]*/i', '', $p);
+        // Replace punctuation/hyphens with single space
+        $p = preg_replace('/[^a-z0-9]/', ' ', $p);
+        return trim(preg_replace('/\s+/', ' ', $p));
+    }
+
+    /**
+     * Map any arbitrary prodi string to official UIS prodi name
+     */
+    private function matchOfficialProdi(?string $inputProdi, array $officialList): string
+    {
+        if (!$inputProdi) return 'S1 - Teknik Informatika';
+        $normInput = $this->normalizeProdi($inputProdi);
+        foreach ($officialList as $official) {
+            if ($this->normalizeProdi($official) === $normInput) {
+                return $official;
+            }
+        }
+        return $inputProdi;
     }
 
     /**
@@ -43,6 +82,8 @@ class RekapitulasiController extends Controller
         $allRekognisi  = Rekognisi::all();
         $allSertifikasi= Sertifikasi::all();
         $allKejuaraan  = Kejuaraan::all();
+
+        $prodis = $this->getProdiList();
 
         // Extract available years
         $availableYears = collect()
@@ -64,23 +105,26 @@ class RekapitulasiController extends Controller
         // 1. Process Belmawa
         if ($selectedModul === 'all' || $selectedModul === 'belmawa') {
             foreach ($allBelmawa as $item) {
-                $prodi = $item->program_studi ?? 'Teknik Informatika';
-                $tahun = (int)($item->tahun ?? date('Y'));
-                $jenis = 'Akademik';
-                $level = $item->tingkat ?? 'Nasional';
+                $rawProdi = $item->program_studi ?? 'Teknik Informatika';
+                $prodi    = $this->matchOfficialProdi($rawProdi, $prodis);
+                $tahun    = (int)($item->tahun ?? date('Y'));
+                $jenis    = 'Akademik';
+                $level    = $item->tingkat ?? 'Nasional';
 
                 $records[] = [
-                    'modul'          => 'Prestasi Belmawa',
-                    'judul_kegiatan' => $item->nama_lomba,
-                    'kategori'       => $item->kategori_lomba ?? 'Kemendikbud',
-                    'level'          => $level,
-                    'capaian'        => $item->capaian_prestasi,
-                    'mahasiswa'      => $item->nama_mahasiswa ?? '-',
-                    'nim'            => $item->nim ?? '-',
-                    'prodi'          => $prodi,
-                    'tahun'          => $tahun,
-                    'jenis'          => $jenis,
-                    'status'         => $item->status,
+                    'modul'              => 'Prestasi Belmawa',
+                    'judul_kegiatan'     => $item->nama_lomba,
+                    'kategori'           => $item->kategori_lomba ?? 'Kemendikbud',
+                    'kepesertaan'        => 'Individu',
+                    'level'              => $level,
+                    'capaian'            => $item->capaian_prestasi,
+                    'mahasiswa'          => $item->nama_mahasiswa ?? '-',
+                    'nim'                => $item->nim ?? '-',
+                    'prodi'              => $prodi,
+                    'tahun'              => $tahun,
+                    'jenis'              => $jenis,
+                    'tanggal_sertifikat' => '-',
+                    'status'             => $item->status,
                 ];
             }
         }
@@ -97,20 +141,25 @@ class RekapitulasiController extends Controller
                 $firstMhs = $mhsList[0] ?? [];
                 $namaMhs = $firstMhs['nama'] ?? '-';
                 $nimMhs  = $firstMhs['nim'] ?? '-';
-                $prodiMhs= $firstMhs['prodi'] ?? 'Teknik Informatika';
+                $rawProdi= $firstMhs['prodi'] ?? 'Teknik Informatika';
+                $prodiMhs= $this->matchOfficialProdi($rawProdi, $prodis);
+
+                $tglSertifikat = $item->tanggal_sertifikat ? Carbon::parse($item->tanggal_sertifikat)->format('d/m/Y') : '-';
 
                 $records[] = [
-                    'modul'          => 'Prestasi Mandiri',
-                    'judul_kegiatan' => $item->nama_kompetisi,
-                    'kategori'       => $item->kategori,
-                    'level'          => $level,
-                    'capaian'        => $item->peringkat,
-                    'mahasiswa'      => $namaMhs,
-                    'nim'            => $nimMhs,
-                    'prodi'          => $prodiMhs,
-                    'tahun'          => $tahun,
-                    'jenis'          => $jenis,
-                    'status'         => $item->status,
+                    'modul'              => 'Prestasi Mandiri',
+                    'judul_kegiatan'     => $item->nama_kompetisi,
+                    'kategori'           => $item->kategori ?? '-',
+                    'kepesertaan'        => $item->kepesertaan ?? 'Individu',
+                    'level'              => $level,
+                    'capaian'            => $item->peringkat,
+                    'mahasiswa'          => $namaMhs,
+                    'nim'                => $nimMhs,
+                    'prodi'              => $prodiMhs,
+                    'tahun'              => $tahun,
+                    'jenis'              => $jenis,
+                    'tanggal_sertifikat' => $tglSertifikat,
+                    'status'             => $item->status,
                 ];
             }
         }
@@ -125,20 +174,25 @@ class RekapitulasiController extends Controller
                 $firstMhs = $mhsList[0] ?? [];
                 $namaMhs = $firstMhs['nama'] ?? '-';
                 $nimMhs  = $firstMhs['nim'] ?? '-';
-                $prodiMhs= $firstMhs['prodi'] ?? 'Teknik Informatika';
+                $rawProdi= $firstMhs['prodi'] ?? 'Teknik Informatika';
+                $prodiMhs= $this->matchOfficialProdi($rawProdi, $prodis);
+
+                $tglSertifikat = $item->tanggal_sertifikat ? Carbon::parse($item->tanggal_sertifikat)->format('d/m/Y') : '-';
 
                 $records[] = [
-                    'modul'          => 'Rekognisi',
-                    'judul_kegiatan' => $item->nama_rekognisi,
-                    'kategori'       => $item->jenis,
-                    'level'          => $level,
-                    'capaian'        => 'Rekognisi ' . $item->jenis,
-                    'mahasiswa'      => $namaMhs,
-                    'nim'            => $nimMhs,
-                    'prodi'          => $prodiMhs,
-                    'tahun'          => $tahun,
-                    'jenis'          => 'Akademik',
-                    'status'         => $item->status,
+                    'modul'              => 'Rekognisi',
+                    'judul_kegiatan'     => $item->nama_rekognisi,
+                    'kategori'           => $item->jenis ?? 'Rekognisi',
+                    'kepesertaan'        => 'Individu',
+                    'level'              => $level,
+                    'capaian'            => 'Rekognisi ' . ($item->jenis ?? ''),
+                    'mahasiswa'          => $namaMhs,
+                    'nim'                => $nimMhs,
+                    'prodi'              => $prodiMhs,
+                    'tahun'              => $tahun,
+                    'jenis'              => 'Akademik',
+                    'tanggal_sertifikat' => $tglSertifikat,
+                    'status'             => $item->status,
                 ];
             }
         }
@@ -153,20 +207,25 @@ class RekapitulasiController extends Controller
                 $firstMhs = $mhsList[0] ?? [];
                 $namaMhs = $firstMhs['nama'] ?? '-';
                 $nimMhs  = $firstMhs['nim'] ?? '-';
-                $prodiMhs= $firstMhs['prodi'] ?? 'Teknik Informatika';
+                $rawProdi= $firstMhs['prodi'] ?? 'Teknik Informatika';
+                $prodiMhs= $this->matchOfficialProdi($rawProdi, $prodis);
+
+                $tglSertifikat = $item->tanggal_sertifikat ? Carbon::parse($item->tanggal_sertifikat)->format('d/m/Y') : '-';
 
                 $records[] = [
-                    'modul'          => 'Sertifikasi',
-                    'judul_kegiatan' => $item->nama_sertifikasi,
-                    'kategori'       => 'Kompetensi Profesi',
-                    'level'          => $level,
-                    'capaian'        => 'Lulus Sertifikasi',
-                    'mahasiswa'      => $namaMhs,
-                    'nim'            => $nimMhs,
-                    'prodi'          => $prodiMhs,
-                    'tahun'          => $tahun,
-                    'jenis'          => 'Akademik',
-                    'status'         => $item->status,
+                    'modul'              => 'Sertifikasi',
+                    'judul_kegiatan'     => $item->nama_sertifikasi,
+                    'kategori'           => 'Kompetensi Profesi',
+                    'kepesertaan'        => 'Individu',
+                    'level'              => $level,
+                    'capaian'            => 'Lulus Sertifikasi',
+                    'mahasiswa'          => $namaMhs,
+                    'nim'                => $nimMhs,
+                    'prodi'              => $prodiMhs,
+                    'tahun'              => $tahun,
+                    'jenis'              => 'Akademik',
+                    'tanggal_sertifikat' => $tglSertifikat,
+                    'status'             => $item->status,
                 ];
             }
         }
@@ -185,8 +244,10 @@ class RekapitulasiController extends Controller
             if ($selectedTahun !== 'all' && (int)$row['tahun'] !== (int)$selectedTahun) {
                 return false;
             }
-            if ($selectedProdi !== 'all' && strtolower($row['prodi']) !== strtolower($selectedProdi)) {
-                return false;
+            if ($selectedProdi !== 'all') {
+                if ($this->normalizeProdi($row['prodi']) !== $this->normalizeProdi($selectedProdi)) {
+                    return false;
+                }
             }
             if ($selectedJenis !== 'all' && strtolower($row['jenis']) !== strtolower($selectedJenis)) {
                 return false;
@@ -197,7 +258,6 @@ class RekapitulasiController extends Controller
         // Generate Matrix per Prodi & Level
         $levels = ['Kabupaten/Kota', 'Provinsi', 'Nasional', 'Internasional'];
         $matrix = [];
-        $prodis = $this->getProdiList();
 
         foreach ($prodis as $p) {
             $matrix[$p] = [

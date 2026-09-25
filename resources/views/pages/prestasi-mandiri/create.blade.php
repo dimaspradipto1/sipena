@@ -17,11 +17,25 @@
     <!-- SIMKATMAWA Soft Blue Header Banner -->
     <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);">
         <div class="card-body p-4">
-            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">
-                Tambah Prestasi
-            </span>
-            <h5 class="fw-bold text-dark mb-1">Form prestasi mandiri terpadu</h5>
-            <p class="text-secondary small mb-0">Data mahasiswa dan dosen kini diisi langsung di form ini, sehingga tidak perlu berpindah halaman setelah data prestasi tersimpan.</p>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">
+                        Tambah Prestasi
+                    </span>
+                    <h5 class="fw-bold text-dark mb-1">Form prestasi mandiri terpadu</h5>
+                    <p class="text-secondary small mb-0">Data mahasiswa dan dosen kini diisi langsung di form ini, sehingga tidak perlu berpindah halaman setelah data prestasi tersimpan.</p>
+                </div>
+                @php
+                    $lpjTarget = $activeTemplateLpj ?? \App\Models\TemplateLpj::getActiveTemplate('Prestasi Mandiri');
+                    $lpjUrl = $lpjTarget ? $lpjTarget->download_url : route('prestasi-mandiri.template-lpj');
+                @endphp
+                <div class="flex-shrink-0">
+                    <a href="{{ $lpjUrl }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary px-3 py-2 rounded-pill shadow-sm d-inline-flex align-items-center fw-medium" title="{{ $lpjTarget ? $lpjTarget->nama : 'Download Template LPJ' }}">
+                        <i class="bi bi-file-earmark-word me-2 fs-6"></i>
+                        <span>Download Template LPJ</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -37,7 +51,7 @@
         </div>
     @endif
 
-    <form action="{{ route('prestasi-mandiri.store') }}" method="POST">
+    <form action="{{ route('prestasi-mandiri.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <!-- Card 1: Data Prestasi -->
@@ -174,6 +188,23 @@
                             <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
                             <input type="url" class="form-control @error('link_dokumen_undangan') is-invalid @enderror" id="link_dokumen_undangan" name="link_dokumen_undangan" value="{{ old('link_dokumen_undangan', $prestasiMandiri->link_dokumen_undangan ?? '') }}" placeholder="URL">
                         </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="link_dokumen_lpj" class="form-label fw-medium">Link Dokumen LPJ</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-secondary"><i class="bi bi-link-45deg"></i></span>
+                            <input type="url" class="form-control @error('link_dokumen_lpj') is-invalid @enderror" id="link_dokumen_lpj" name="link_dokumen_lpj" value="{{ old('link_dokumen_lpj', $prestasiMandiri->link_dokumen_lpj ?? '') }}" placeholder="URL Google Drive / Cloud">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="file_dokumen_lpj" class="form-label fw-medium">Upload File LPJ</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-secondary"><i class="bi bi-upload"></i></span>
+                            <input type="file" class="form-control @error('file_dokumen_lpj') is-invalid @enderror" id="file_dokumen_lpj" name="file_dokumen_lpj" accept=".pdf,.doc,.docx,.zip">
+                        </div>
+                        <small class="text-muted" style="font-size: 0.75rem;">Format: .pdf, .docx, .doc, .zip (Maks. 20 MB)</small>
                     </div>
 
                     <div class="col-12">

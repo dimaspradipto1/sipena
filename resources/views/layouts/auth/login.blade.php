@@ -481,6 +481,13 @@
                         <button class="btn btn-login" type="submit">
                             <i class="bi bi-box-arrow-in-right me-2"></i> Masuk ke Sistem
                         </button>
+
+                        <div class="text-center mt-3 pt-2 border-top">
+                            <p class="text-muted small mb-0">
+                                Belum memiliki akun mahasiswa? 
+                                <a href="{{ route('register') }}" class="fw-bold text-success text-decoration-none">Daftar Sekarang</a>
+                            </p>
+                        </div>
                     </form>
                 </div>
             </div>

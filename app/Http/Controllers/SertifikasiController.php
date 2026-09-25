@@ -115,8 +115,35 @@ class SertifikasiController extends Controller
     /**
      * Display the specified resource.
      */
+    /**
+     * Authorize student access
+     */
+    private function authorizeStudentAccess(Sertifikasi $sertifikasi): void
+    {
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa') {
+            $studentName = strtolower(trim($user->name));
+            $isOwner = false;
+            if (!empty($sertifikasi->data_mahasiswa) && is_array($sertifikasi->data_mahasiswa)) {
+                foreach ($sertifikasi->data_mahasiswa as $mhs) {
+                    if (!empty($mhs['nama']) && str_contains(strtolower($mhs['nama']), $studentName)) {
+                        $isOwner = true;
+                        break;
+                    }
+                }
+            }
+            if (!$isOwner) {
+                abort(403, 'Akses tidak diizinkan. Anda hanya dapat melihat dan mengelola data sertifikasi Anda sendiri.');
+            }
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
     public function show(Sertifikasi $sertifikasi)
     {
+        $this->authorizeStudentAccess($sertifikasi);
         return view('pages.sertifikasi.show', compact('sertifikasi'));
     }
 
@@ -125,6 +152,7 @@ class SertifikasiController extends Controller
      */
     public function edit(Sertifikasi $sertifikasi)
     {
+        $this->authorizeStudentAccess($sertifikasi);
         $options = $this->getFormOptions();
         return view('pages.sertifikasi.edit', compact('options', 'sertifikasi'));
     }
@@ -134,6 +162,8 @@ class SertifikasiController extends Controller
      */
     public function update(Request $request, Sertifikasi $sertifikasi)
     {
+        $this->authorizeStudentAccess($sertifikasi);
+
         $validated = $request->validate([
             'level'                   => ['required', 'string'],
             'nama_sertifikasi'        => ['required', 'string', 'max:255'],
@@ -160,6 +190,24 @@ class SertifikasiController extends Controller
             return !empty($item['nidn']) || !empty($item['nama']);
         }));
 
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa') {
+            $hasCurrentStudent = false;
+            foreach ($mahasiswa as $mhs) {
+                if (!empty($mhs['nama']) && str_contains(strtolower($mhs['nama']), strtolower(trim($user->name)))) {
+                    $hasCurrentStudent = true;
+                    break;
+                }
+            }
+            if (!$hasCurrentStudent) {
+                $mahasiswa[] = [
+                    'nama'  => $user->name,
+                    'nim'   => $request->input('nim', ''),
+                    'prodi' => 'S1 - Teknik Informatika'
+                ];
+            }
+        }
+
         $validated['data_mahasiswa'] = $mahasiswa;
         $validated['data_dosen'] = $dosen;
         if (!empty($validated['tanggal_sertifikat'])) {
@@ -177,6 +225,8 @@ class SertifikasiController extends Controller
      */
     public function destroy(Request $request, Sertifikasi $sertifikasi)
     {
+        $this->authorizeStudentAccess($sertifikasi);
+
         $sertifikasi->delete();
 
         if ($request->ajax()) {

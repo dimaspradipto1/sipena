@@ -21,17 +21,18 @@ class DashboardController extends Controller
 
         // Master List of Official Prodi at Universitas Ibnu Sina
         $defaultProdis = [
-            'S2-MAGISTER MANAJEMEN',
-            'S2-KESEHATAN MASYARAKAT',
-            'S1-AKUNTANSI',
-            'S1-MANAJEMEN',
-            'S1-TEKNIK INDUSTRI',
-            'S1-TEKNIK INFORMATIKA',
-            'S1-TEKNIK LOGISTIK',
-            'S1-SISTEM INFORMASI',
-            'S1-TEKNIK PERKAPALAN',
-            'S1-KESEHATAN DAN KESELAMATAN KERJA',
-            'S1-KESEHATAN LINGKUNGAN',
+            'S1 - Teknik Informatika',
+            'S1 - Sistem Informasi',
+            'S1 - Teknik Industri',
+            'S1 - Teknik Logistik',
+            'S1 - Teknik Perkapalan',
+            'S1 - Manajemen',
+            'S1 - Akuntansi',
+            'S1 - Kesehatan Masyarakat',
+            'S1 - Kesehatan dan Keselamatan Kerja',
+            'S1 - Kesehatan Lingkungan',
+            'S2 - Magister Manajemen',
+            'S2 - Magister Kesehatan Masyarakat',
         ];
 
         // Retrieve all records for memory-efficient mapping & filtering
@@ -58,16 +59,36 @@ class DashboardController extends Controller
 
         $availableYears = $yearsFromDb;
 
+        // Normalizer helper for robust prodi comparisons
+        $normalizeProdi = function (?string $prodi): string {
+            if (!$prodi) return '';
+            $p = strtolower(trim($prodi));
+            $p = preg_replace('/^(s1|s2|d3)[\s\-_]*/i', '', $p);
+            $p = preg_replace('/[^a-z0-9]/', ' ', $p);
+            return trim(preg_replace('/\s+/', ' ', $p));
+        };
+
+        $matchOfficialProdi = function (?string $inputProdi) use ($defaultProdis, $normalizeProdi): string {
+            if (!$inputProdi) return 'S1 - Teknik Informatika';
+            $norm = $normalizeProdi($inputProdi);
+            foreach ($defaultProdis as $official) {
+                if ($normalizeProdi($official) === $norm) {
+                    return $official;
+                }
+            }
+            return $inputProdi;
+        };
+
         // Helper to extract prodi from item
-        $getProdisFromItem = function ($item, $type) {
+        $getProdisFromItem = function ($item, $type) use ($matchOfficialProdi) {
             if ($type === 'belmawa') {
-                return array_filter([$item->program_studi]);
+                return array_filter([$matchOfficialProdi($item->program_studi)]);
             }
             $prodis = [];
             if (!empty($item->data_mahasiswa) && is_array($item->data_mahasiswa)) {
                 foreach ($item->data_mahasiswa as $mhs) {
                     if (!empty($mhs['prodi'])) {
-                        $prodis[] = $mhs['prodi'];
+                        $prodis[] = $matchOfficialProdi($mhs['prodi']);
                     }
                 }
             }
@@ -165,12 +186,21 @@ class DashboardController extends Controller
         }
 
         // Apply Active Filters to Dataset
-        $filteredDataset = array_filter($dataset, function ($row) use ($selectedTahun, $selectedProdi, $selectedJenis) {
+        $filteredDataset = array_filter($dataset, function ($row) use ($selectedTahun, $selectedProdi, $selectedJenis, $normalizeProdi) {
             if ($selectedTahun !== 'all' && (int)$row['tahun'] !== (int)$selectedTahun) {
                 return false;
             }
-            if ($selectedProdi !== 'all' && !in_array($selectedProdi, $row['prodis'])) {
-                return false;
+            if ($selectedProdi !== 'all') {
+                $hasProdi = false;
+                foreach ($row['prodis'] as $p) {
+                    if ($normalizeProdi($p) === $normalizeProdi($selectedProdi)) {
+                        $hasProdi = true;
+                        break;
+                    }
+                }
+                if (!$hasProdi) {
+                    return false;
+                }
             }
             if ($selectedJenis !== 'all' && strtolower($row['jenis']) !== strtolower($selectedJenis)) {
                 return false;
@@ -196,7 +226,17 @@ class DashboardController extends Controller
                 if (isset($prodiCounts[$p])) {
                     $prodiCounts[$p]++;
                 } else {
-                    $prodiCounts[$p] = 1;
+                    $matched = false;
+                    foreach ($defaultProdis as $official) {
+                        if ($normalizeProdi($official) === $normalizeProdi($p)) {
+                            $prodiCounts[$official]++;
+                            $matched = true;
+                            break;
+                        }
+                    }
+                    if (!$matched) {
+                        $prodiCounts[$p] = ($prodiCounts[$p] ?? 0) + 1;
+                    }
                 }
             }
         }
@@ -213,9 +253,18 @@ class DashboardController extends Controller
         $timelineYears = array_reverse($availableYears);
         $chartTahunSeries = [];
         foreach ($timelineYears as $year) {
-            $countForYear = count(array_filter($dataset, function ($row) use ($year, $selectedProdi, $selectedJenis) {
+            $countForYear = count(array_filter($dataset, function ($row) use ($year, $selectedProdi, $selectedJenis, $normalizeProdi) {
                 if ((int)$row['tahun'] !== (int)$year) return false;
-                if ($selectedProdi !== 'all' && !in_array($selectedProdi, $row['prodis'])) return false;
+                if ($selectedProdi !== 'all') {
+                    $hasProdi = false;
+                    foreach ($row['prodis'] as $p) {
+                        if ($normalizeProdi($p) === $normalizeProdi($selectedProdi)) {
+                            $hasProdi = true;
+                            break;
+                        }
+                    }
+                    if (!$hasProdi) return false;
+                }
                 if ($selectedJenis !== 'all' && strtolower($row['jenis']) !== strtolower($selectedJenis)) return false;
                 return true;
             }));

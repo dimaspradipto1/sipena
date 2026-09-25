@@ -26,6 +26,8 @@ class PrestasiMandiri extends Model
         'tanggal_sertifikat',
         'link_foto_upp',
         'link_dokumen_undangan',
+        'link_dokumen_lpj',
+        'file_dokumen_lpj',
         'keterangan',
         'tahun',
         'pt',

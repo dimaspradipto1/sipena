@@ -1258,3 +1258,159 @@ h6 {
   font-size: 13px;
   color: #012970;
 }
+
+/*--------------------------------------------------------------
+# SIPENA Modern Action Buttons & Global Button Enhancements
+--------------------------------------------------------------*/
+.action-btn-group,
+.btn-group[role="group"] {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #ffffff;
+  vertical-align: middle;
+  padding: 0 !important;
+}
+
+.action-btn-group form,
+.btn-group[role="group"] form {
+  display: inline-flex !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.action-btn-group .btn-action,
+.action-btn-group form .btn-action,
+.btn-group[role="group"] > .btn,
+.btn-group[role="group"] form > .btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-size: 13.5px !important;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  line-height: 1 !important;
+  box-shadow: none !important;
+}
+
+/* Micro separator between buttons in group */
+.action-btn-group > *:not(:last-child),
+.action-btn-group form:not(:last-child),
+.btn-group[role="group"] > *:not(:last-child),
+.btn-group[role="group"] form:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+/* 1. Detail (View) - Modern Vibrant Cyan / Azure */
+.action-btn-group .btn-action-view,
+.btn-group[role="group"] > .btn-info,
+.btn-group[role="group"] > .btn-outline-info {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+  color: #ffffff !important;
+}
+.action-btn-group .btn-action-view:hover,
+.btn-group[role="group"] > .btn-info:hover,
+.btn-group[role="group"] > .btn-outline-info:hover {
+  background: linear-gradient(135deg, #38bdf8 0%, #0369a1 100%) !important;
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  z-index: 5;
+}
+
+/* 2. Edit - Modern Golden Amber / Honey */
+.action-btn-group .btn-action-edit,
+.btn-group[role="group"] > .btn-warning,
+.btn-group[role="group"] > .btn-outline-primary,
+.btn-group[role="group"] > .btn-outline-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  color: #ffffff !important;
+}
+.action-btn-group .btn-action-edit:hover,
+.btn-group[role="group"] > .btn-warning:hover,
+.btn-group[role="group"] > .btn-outline-primary:hover,
+.btn-group[role="group"] > .btn-outline-warning:hover {
+  background: linear-gradient(135deg, #fbbf24 0%, #b45309 100%) !important;
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  z-index: 5;
+}
+
+/* 3. Delete - Modern Rich Crimson / Rose Red */
+.action-btn-group .btn-action-delete,
+.btn-group[role="group"] > .btn-danger,
+.btn-group[role="group"] > .btn-outline-danger,
+.btn-group[role="group"] form > .btn-danger,
+.btn-group[role="group"] form > .btn-outline-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+}
+.action-btn-group .btn-action-delete:hover,
+.btn-group[role="group"] > .btn-danger:hover,
+.btn-group[role="group"] > .btn-outline-danger:hover,
+.btn-group[role="group"] form > .btn-danger:hover,
+.btn-group[role="group"] form > .btn-outline-danger:hover {
+  background: linear-gradient(135deg, #f87171 0%, #b91c1c 100%) !important;
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  z-index: 5;
+}
+
+/* 4. Download - Modern Emerald Green */
+.action-btn-group .btn-action-download,
+.btn-group[role="group"] > .btn-success,
+.btn-group[role="group"] > .btn-outline-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+}
+.action-btn-group .btn-action-download:hover,
+.btn-group[role="group"] > .btn-success:hover,
+.btn-group[role="group"] > .btn-outline-success:hover {
+  background: linear-gradient(135deg, #34d399 0%, #047857 100%) !important;
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  z-index: 5;
+}
+
+/* 5. Disabled action button */
+.action-btn-group .btn-action:disabled,
+.action-btn-group .btn-action.disabled,
+.btn-group[role="group"] > .btn:disabled,
+.btn-group[role="group"] > .btn.disabled {
+  background: #cbd5e1 !important;
+  color: #94a3b8 !important;
+  cursor: not-allowed;
+  filter: none !important;
+  transform: none !important;
+}
+
+/* Active click state */
+.action-btn-group .btn-action:active,
+.btn-group[role="group"] > .btn:active {
+  transform: scale(0.94) !important;
+}
+
+/* Global button elevation */
+.btn {
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(0);
+}

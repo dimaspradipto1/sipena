@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\DataTables\PrestasiMandiriDataTable;
 use App\Models\PrestasiMandiri;
+use App\Models\TemplateLpj;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PrestasiMandiriController extends Controller
 {
@@ -30,13 +32,17 @@ class PrestasiMandiriController extends Controller
                 'Lainnya'                              => 'Lainnya',
             ],
             'peringkats' => [
-                'Juara I'          => 'Juara I',
-                'Juara II'         => 'Juara II',
-                'Juara III'        => 'Juara III',
-                'Harapan I'        => 'Harapan I',
-                'Harapan II'       => 'Harapan II',
-                'Harapan III'      => 'Harapan III',
-                'Peserta / Finalis' => 'Peserta / Finalis',
+                'Juara Umum'                                     => 'Juara Umum',
+                'Juara I'                                        => 'Juara I',
+                'Juara II'                                       => 'Juara II',
+                'Juara III'                                      => 'Juara III',
+                'Harapan I'                                      => 'Harapan I',
+                'Harapan II'                                     => 'Harapan II',
+                'Harapan III'                                    => 'Harapan III',
+                'Apresiasi Kejuaraan'                            => 'Apresiasi Kejuaraan',
+                'Penghargaan'                                    => 'Penghargaan',
+                'Apresiasi Kejuaraan / Penghargaan / Juara Umum' => 'Apresiasi Kejuaraan / Penghargaan / Juara Umum',
+                'Peserta / Finalis'                              => 'Peserta / Finalis',
             ],
             'kepesertaans' => [
                 'Individu' => 'Individu',
@@ -48,6 +54,46 @@ class PrestasiMandiriController extends Controller
                 'Hybrid' => 'Hybrid',
             ],
         ];
+    }
+
+    /**
+     * Download Template Dokumen LPJ (.docx / custom link) Prestasi Mandiri
+     */
+    public function downloadTemplateLpj()
+    {
+        $activeTemplate = TemplateLpj::getActiveTemplate('Prestasi Mandiri');
+
+        if ($activeTemplate) {
+            if ($activeTemplate->tipe === 'link' && !empty($activeTemplate->url_link)) {
+                return redirect()->away($activeTemplate->url_link);
+            }
+
+            if (!empty($activeTemplate->file_path)) {
+                if (Storage::disk('public')->exists($activeTemplate->file_path)) {
+                    $downloadName = $activeTemplate->file_name ?? basename($activeTemplate->file_path);
+                    return Storage::disk('public')->download($activeTemplate->file_path, $downloadName);
+                }
+
+                $publicPath = public_path($activeTemplate->file_path);
+                if (file_exists($publicPath)) {
+                    $downloadName = $activeTemplate->file_name ?? basename($publicPath);
+                    return response()->download($publicPath, $downloadName);
+                }
+            }
+
+            if (!empty($activeTemplate->url_link)) {
+                return redirect()->away($activeTemplate->url_link);
+            }
+        }
+
+        $fallbackPath = public_path('templates/template_lpj_prestasi_mandiri.docx');
+        if (file_exists($fallbackPath)) {
+            return response()->download($fallbackPath, 'Template_LPJ_Prestasi_Mandiri.docx', [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            ]);
+        }
+
+        abort(404, 'File template LPJ tidak ditemukan.');
     }
 
     /**
@@ -65,7 +111,8 @@ class PrestasiMandiriController extends Controller
     {
         $options = $this->getFormOptions();
         $prestasiMandiri = new PrestasiMandiri();
-        return view('pages.prestasi-mandiri.create', compact('options', 'prestasiMandiri'));
+        $activeTemplateLpj = TemplateLpj::getActiveTemplate('Prestasi Mandiri');
+        return view('pages.prestasi-mandiri.create', compact('options', 'prestasiMandiri', 'activeTemplateLpj'));
     }
 
     /**
@@ -88,6 +135,8 @@ class PrestasiMandiriController extends Controller
             'tanggal_sertifikat'      => ['nullable', 'date'],
             'link_foto_upp'           => ['nullable', 'url', 'max:255'],
             'link_dokumen_undangan'   => ['nullable', 'url', 'max:255'],
+            'link_dokumen_lpj'        => ['nullable', 'url', 'max:255'],
+            'file_dokumen_lpj'        => ['nullable', 'file', 'mimes:pdf,doc,docx,zip', 'max:20480'],
             'keterangan'              => ['nullable', 'string'],
             'data_mahasiswa'          => ['nullable', 'array'],
             'data_mahasiswa.*.nim'    => ['nullable', 'string'],
@@ -103,6 +152,8 @@ class PrestasiMandiriController extends Controller
             'nama_cabang.required'      => 'Nama Cabang wajib diisi.',
             'peringkat.required'        => 'Peringkat wajib dipilih.',
             'nama_penyelenggara.required' => 'Nama Penyelenggara wajib diisi.',
+            'file_dokumen_lpj.mimes'    => 'Format file LPJ harus berupa .pdf, .doc, .docx, atau .zip.',
+            'file_dokumen_lpj.max'      => 'Ukuran file LPJ maksimal 20 MB.',
         ]);
 
         $mahasiswa = array_values(array_filter($request->input('data_mahasiswa', []), function ($item) {
@@ -131,6 +182,12 @@ class PrestasiMandiriController extends Controller
             }
         }
 
+        if ($request->hasFile('file_dokumen_lpj')) {
+            $file = $request->file('file_dokumen_lpj');
+            $storedName = time() . '_' . preg_replace('/[^A-Za-z0-9\._-]/', '', $file->getClientOriginalName());
+            $validated['file_dokumen_lpj'] = $file->storeAs('dokumen_lpj', $storedName, 'public');
+        }
+
         $validated['data_mahasiswa'] = $mahasiswa;
         $validated['data_dosen'] = $dosen;
         $validated['tahun'] = !empty($validated['tanggal_sertifikat']) 
@@ -148,10 +205,34 @@ class PrestasiMandiriController extends Controller
     }
 
     /**
+     * Authorize that the current student owns or is a member of the record
+     */
+    private function authorizeStudentAccess(PrestasiMandiri $prestasiMandiri): void
+    {
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa') {
+            $studentName = strtolower(trim($user->name));
+            $isOwner = false;
+            if (!empty($prestasiMandiri->data_mahasiswa) && is_array($prestasiMandiri->data_mahasiswa)) {
+                foreach ($prestasiMandiri->data_mahasiswa as $mhs) {
+                    if (!empty($mhs['nama']) && str_contains(strtolower($mhs['nama']), $studentName)) {
+                        $isOwner = true;
+                        break;
+                    }
+                }
+            }
+            if (!$isOwner) {
+                abort(403, 'Akses tidak diizinkan. Anda hanya dapat melihat dan mengelola data prestasi Anda sendiri.');
+            }
+        }
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(PrestasiMandiri $prestasiMandiri)
     {
+        $this->authorizeStudentAccess($prestasiMandiri);
         return view('pages.prestasi-mandiri.show', compact('prestasiMandiri'));
     }
 
@@ -160,8 +241,10 @@ class PrestasiMandiriController extends Controller
      */
     public function edit(PrestasiMandiri $prestasiMandiri)
     {
+        $this->authorizeStudentAccess($prestasiMandiri);
         $options = $this->getFormOptions();
-        return view('pages.prestasi-mandiri.edit', compact('options', 'prestasiMandiri'));
+        $activeTemplateLpj = TemplateLpj::getActiveTemplate('Prestasi Mandiri');
+        return view('pages.prestasi-mandiri.edit', compact('options', 'prestasiMandiri', 'activeTemplateLpj'));
     }
 
     /**
@@ -169,6 +252,8 @@ class PrestasiMandiriController extends Controller
      */
     public function update(Request $request, PrestasiMandiri $prestasiMandiri)
     {
+        $this->authorizeStudentAccess($prestasiMandiri);
+
         $validated = $request->validate([
             'level'                   => ['required', 'string'],
             'kategori'                => ['required', 'string'],
@@ -184,6 +269,8 @@ class PrestasiMandiriController extends Controller
             'tanggal_sertifikat'      => ['nullable', 'date'],
             'link_foto_upp'           => ['nullable', 'url', 'max:255'],
             'link_dokumen_undangan'   => ['nullable', 'url', 'max:255'],
+            'link_dokumen_lpj'        => ['nullable', 'url', 'max:255'],
+            'file_dokumen_lpj'        => ['nullable', 'file', 'mimes:pdf,doc,docx,zip', 'max:20480'],
             'keterangan'              => ['nullable', 'string'],
             'data_mahasiswa'          => ['nullable', 'array'],
             'data_dosen'              => ['nullable', 'array'],
@@ -194,6 +281,8 @@ class PrestasiMandiriController extends Controller
             'nama_cabang.required'      => 'Nama Cabang wajib diisi.',
             'peringkat.required'        => 'Peringkat wajib dipilih.',
             'nama_penyelenggara.required' => 'Nama Penyelenggara wajib diisi.',
+            'file_dokumen_lpj.mimes'    => 'Format file LPJ harus berupa .pdf, .doc, .docx, atau .zip.',
+            'file_dokumen_lpj.max'      => 'Ukuran file LPJ maksimal 20 MB.',
         ]);
 
         $mahasiswa = array_values(array_filter($request->input('data_mahasiswa', []), function ($item) {
@@ -203,6 +292,33 @@ class PrestasiMandiriController extends Controller
         $dosen = array_values(array_filter($request->input('data_dosen', []), function ($item) {
             return !empty($item['nidn']) || !empty($item['nama']);
         }));
+
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa') {
+            $hasCurrentStudent = false;
+            foreach ($mahasiswa as $mhs) {
+                if (!empty($mhs['nama']) && str_contains(strtolower($mhs['nama']), strtolower(trim($user->name)))) {
+                    $hasCurrentStudent = true;
+                    break;
+                }
+            }
+            if (!$hasCurrentStudent) {
+                $mahasiswa[] = [
+                    'nama'  => $user->name,
+                    'nim'   => $request->input('nim', ''),
+                    'prodi' => 'S1 - Teknik Informatika'
+                ];
+            }
+        }
+
+        if ($request->hasFile('file_dokumen_lpj')) {
+            if ($prestasiMandiri->file_dokumen_lpj && Storage::disk('public')->exists($prestasiMandiri->file_dokumen_lpj)) {
+                Storage::disk('public')->delete($prestasiMandiri->file_dokumen_lpj);
+            }
+            $file = $request->file('file_dokumen_lpj');
+            $storedName = time() . '_' . preg_replace('/[^A-Za-z0-9\._-]/', '', $file->getClientOriginalName());
+            $validated['file_dokumen_lpj'] = $file->storeAs('dokumen_lpj', $storedName, 'public');
+        }
 
         $validated['data_mahasiswa'] = $mahasiswa;
         $validated['data_dosen'] = $dosen;
@@ -221,6 +337,12 @@ class PrestasiMandiriController extends Controller
      */
     public function destroy(Request $request, PrestasiMandiri $prestasiMandiri)
     {
+        $this->authorizeStudentAccess($prestasiMandiri);
+
+        if ($prestasiMandiri->file_dokumen_lpj && Storage::disk('public')->exists($prestasiMandiri->file_dokumen_lpj)) {
+            Storage::disk('public')->delete($prestasiMandiri->file_dokumen_lpj);
+        }
+
         $prestasiMandiri->delete();
 
         if ($request->ajax()) {
@@ -229,5 +351,19 @@ class PrestasiMandiriController extends Controller
 
         return redirect()->route('prestasi-mandiri.index')
             ->with('success', 'Data Prestasi Mandiri berhasil dihapus.');
+    }
+
+    /**
+     * Download uploaded LPJ file for Prestasi Mandiri
+     */
+    public function downloadUploadedLpj(PrestasiMandiri $prestasiMandiri)
+    {
+        $this->authorizeStudentAccess($prestasiMandiri);
+
+        if ($prestasiMandiri->file_dokumen_lpj && Storage::disk('public')->exists($prestasiMandiri->file_dokumen_lpj)) {
+            return Storage::disk('public')->download($prestasiMandiri->file_dokumen_lpj);
+        }
+
+        abort(404, 'Berkas dokumen LPJ tidak ditemukan.');
     }
 }

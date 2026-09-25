@@ -67,14 +67,14 @@ class KejuaraanDataTable extends DataTable
             })
             ->addColumn('action', function (Kejuaraan $model) {
                 return '
-                <div class="btn-group" role="group">
-                    <a href="' . route('kejuaraan.show', $model->id) . '" class="btn btn-sm btn-info text-white" title="Detail">
+                <div class="action-btn-group" role="group">
+                    <a href="' . route('kejuaraan.show', $model->id) . '" class="btn-action btn-action-view" title="Detail">
                         <i class="bi bi-eye"></i>
                     </a>
-                    <a href="' . route('kejuaraan.edit', $model->id) . '" class="btn btn-sm btn-warning text-white" title="Edit">
+                    <a href="' . route('kejuaraan.edit', $model->id) . '" class="btn-action btn-action-edit" title="Edit">
                         <i class="bi bi-pencil-square"></i>
                     </a>
-                    <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="' . $model->id . '" data-name="' . e($model->nama_ajang) . '" title="Hapus">
+                    <button type="button" class="btn-action btn-action-delete btn-delete" data-id="' . $model->id . '" data-name="' . e($model->nama_ajang) . '" title="Hapus">
                         <i class="bi bi-trash"></i>
                     </button>
                 </div>

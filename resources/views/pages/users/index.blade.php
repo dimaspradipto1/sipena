@@ -26,9 +26,31 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if(app()->environment('production'))
         {!! str_replace('http:', 'https:', $dataTable->scripts()) !!}
     @else
         {!! $dataTable->scripts() !!}
     @endif
+    <script>
+        $(document).on('click', '.btn-delete', function (e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Pengguna ini akan dihapus secara permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
 @endpush

@@ -58,13 +58,19 @@ class RekognisiDataTable extends DataTable
                 $method = method_field('DELETE');
 
                 return '
-                    <div class="btn-group" role="group">
-                        <a href="' . $showUrl . '" class="btn btn-sm btn-outline-info me-1"><i class="bi bi-eye"></i></a>
-                        <a href="' . $editUrl . '" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-pencil"></i></a>
-                        <form action="' . $deleteUrl . '" method="POST" class="d-inline delete-form">
+                    <div class="action-btn-group" role="group">
+                        <a href="' . $showUrl . '" class="btn-action btn-action-view" title="Detail">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a href="' . $editUrl . '" class="btn-action btn-action-edit" title="Edit">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <form action="' . $deleteUrl . '" method="POST" class="d-inline m-0 p-0 delete-form">
                             ' . $csrf . '
                             ' . $method . '
-                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete"><i class="bi bi-trash"></i></button>
+                            <button type="button" class="btn-action btn-action-delete btn-delete" title="Hapus">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </form>
                     </div>';
             })
